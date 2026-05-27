@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="referrer" content="no-referrer" />
     <title>The Game Repository — Digital Archive & Software Preservation</title>
 
     <style>
@@ -25,6 +26,7 @@
             --color-badge-mobile: #42d4f5;
             --color-badge-niche: #7c6dfa;
             --color-badge-ios: #007aff;
+            --color-badge-emu: #a855f7;
             --color-danger: #f56d6d;
             --color-success: #42f5a1;
 
@@ -406,6 +408,7 @@
         }
 
         .card-cover-label {
+            display: none; /* Hidden visually, but keeps structure */
             font-size: 0.7rem;
             font-family: var(--font-mono);
             letter-spacing: 0.1em;
@@ -464,6 +467,12 @@
             background: rgba(0, 122, 255, 0.12);
             color: var(--color-badge-ios);
             border: 1px solid rgba(0, 122, 255, 0.25);
+        }
+
+        .badge-emu {
+            background: rgba(168, 85, 247, 0.12);
+            color: var(--color-badge-emu);
+            border: 1px solid rgba(168, 85, 247, 0.25);
         }
 
         .card-title {
@@ -803,6 +812,26 @@
             background: rgba(10, 10, 15, 0.9);
         }
 
+        .iframe-status-text {
+            position: absolute;
+            top: 20px;
+            right: 64px;
+            background: rgba(10, 10, 15, 0.75);
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            z-index: 10;
+            backdrop-filter: blur(4px);
+            transition: opacity var(--dur-med) var(--ease-out);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-body);
+        }
+
         /* ============================================================
        SCROLL LOCK (applied to <body>)
     ============================================================ */
@@ -853,10 +882,164 @@
         article.game-card:nth-child(3) {
             animation-delay: 120ms;
         }
+
+        /* ============================================================
+           DARK/LIGHT MODE
+        ============================================================ */
+        body.light-theme {
+            --color-bg: #f4f4f8;
+            --color-surface: #ffffff;
+            --color-surface-2: #e8e8f0;
+            --color-border: rgba(0, 0, 0, 0.1);
+            --color-text: #1a1a24;
+            --color-muted: #5a5a70;
+            --color-accent: #6b5aed;
+            --color-accent-glow: rgba(107, 90, 237, 0.2);
+        }
+
+        body.light-theme .hero h1,
+        body.light-theme .section-header h2,
+        body.light-theme .card-title,
+        body.light-theme .modal h2 {
+            color: #1a1a24;
+        }
+
+        body.light-theme .btn-download,
+        body.light-theme .btn-direct {
+            background: rgba(107, 90, 237, 0.12);
+            color: var(--color-accent);
+            border-color: rgba(107, 90, 237, 0.3);
+        }
+
+        body.light-theme .card-cover::before {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--color-muted);
+            transition: transform var(--dur-fast), color var(--dur-fast);
+            padding: 0 var(--space-2);
+        }
+
+        .btn-theme-toggle:hover {
+            color: var(--color-text);
+            transform: scale(1.15);
+        }
+
+        /* ============================================================
+           NEW BADGE & DIRECT LINK
+        ============================================================ */
+        .badge-new {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #f56d6d, #fa6d9a);
+            color: #fff;
+            padding: 4px 10px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: var(--radius-full);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(245, 109, 109, 0.4);
+            animation: pulse-new 2s infinite;
+        }
+
+        @keyframes pulse-new {
+            0% { transform: scale(1); box-shadow: 0 4px 12px rgba(245, 109, 109, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 4px 16px rgba(245, 109, 109, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 4px 12px rgba(245, 109, 109, 0.4); }
+        }
+
+        .btn-direct {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            background: rgba(124, 109, 250, 0.12);
+            color: var(--color-accent);
+            border: 1px solid rgba(124, 109, 250, 0.3);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            transition: all var(--dur-fast) var(--ease-out);
+            text-decoration: none;
+        }
+
+        .btn-direct:hover {
+            background: rgba(124, 109, 250, 0.22);
+            border-color: var(--color-accent);
+            color: #fff;
+            transform: scale(1.01);
+        }
+
+        body.light-theme .btn-direct:hover {
+            background: var(--color-accent);
+            color: #fff;
+        }
+
+        /* ============================================================
+           FLOATING BACKGROUND PARTICLES
+        ============================================================ */
+        #bg-particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-glyph {
+            position: absolute;
+            bottom: -60px;
+            color: var(--color-accent);
+            opacity: 0;
+            font-size: 1.4rem;
+            line-height: 1;
+            animation: floatUp linear forwards;
+            filter: blur(0.4px);
+            will-change: transform, opacity;
+        }
+
+        body.light-theme .bg-glyph {
+            color: var(--color-accent);
+            filter: blur(0.3px);
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            8% {
+                opacity: var(--glyph-peak-opacity, 0.12);
+            }
+            80% {
+                opacity: var(--glyph-peak-opacity, 0.12);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(calc(-100vh - 80px)) rotate(var(--glyph-rotation, 120deg)) scale(var(--glyph-end-scale, 0.6));
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Animated Background Particles -->
+    <div id="bg-particles" aria-hidden="true"></div>
 
     <!-- ============================================================
        HEADER
@@ -890,6 +1073,11 @@
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Browse</a></li>
                 <li><a href="#">About</a></li>
+                <li>
+                    <button id="theme-toggle" class="btn-theme-toggle" aria-label="Toggle light mode">
+                        ☀️
+                    </button>
+                </li>
             </ul>
         </nav>
     </header>
@@ -914,6 +1102,39 @@
   ============================================================ -->
     <main>
 
+        <!-- SECTION 5: Modern Mobile Games (Moved to Top) -->
+        <section class="showcase-section" aria-labelledby="modern-games-heading">
+            <div class="section-header">
+                <h2 id="modern-games-heading">Modern Games on Mobile (iOS & Android)</h2>
+                <div class="section-line" aria-hidden="true"></div>
+                <span class="section-count" aria-label="1 game">01</span>
+            </div>
+
+            <div class="game-grid">
+
+                <article class="game-card" aria-label="Catalog Entry: LEGO Batman: Legacy of The Dark Knight">
+                    <div class="card-cover" style="background-image: url('images/Lego Batman Legacy of The Dark Knight.avif');" aria-hidden="true">
+                        <span class="badge-new">NEW</span>
+                        <span class="card-cover-icon">🦇</span>
+                        <span class="card-cover-label">Catalog #MM-2026-LBL</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="badge badge-emu">Modern Game</span>
+                        </div>
+                        <p class="card-title">LEGO Batman: Legacy of The Dark Knight</p>
+                        <p class="card-description">
+                            An ambitious mobile action-adventure compiled for high-performance handheld devices. Features advanced dynamic physics, real-time three-dimensional rendering, and custom touch controls optimizing the iconic Dark Knight gameplay.
+                        </p>
+                        <button class="btn-download" data-link="https://steamrip.com/lego-batman-legacy-of-the-dark-knight-free-download/" aria-label="Access Archive — LEGO Batman: Legacy of The Dark Knight">
+                            ↓ Access Archive
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
         <!-- SECTION 1: Legacy Console Systems -->
         <section class="showcase-section" aria-labelledby="retro-heading">
             <div class="section-header">
@@ -925,7 +1146,7 @@
             <div class="game-grid">
 
                 <article class="game-card" aria-label="Catalog Entry: Super Mario World (1990)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/mario_world.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🍄</span>
                         <span class="card-cover-label">Catalog #LC-1990-SMW</span>
                     </div>
@@ -945,7 +1166,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: The Legend of Zelda: Ocarina of Time (1998)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/ocarina.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🗡️</span>
                         <span class="card-cover-label">Catalog #LC-1998-LZO</span>
                     </div>
@@ -965,7 +1186,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Tetris (1989)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/tetris.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🧩</span>
                         <span class="card-cover-label">Catalog #LC-1989-TET</span>
                     </div>
@@ -998,7 +1219,7 @@
             <div class="game-grid">
 
                 <article class="game-card" aria-label="Catalog Entry: Snake II (2000)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/snake.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🐍</span>
                         <span class="card-cover-label">Catalog #MS-2000-SNK</span>
                     </div>
@@ -1018,7 +1239,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Space Impact (2000)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/space_impact.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🚀</span>
                         <span class="card-cover-label">Catalog #MS-2000-SPI</span>
                     </div>
@@ -1038,7 +1259,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Bounce (2001)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/bounce.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🔴</span>
                         <span class="card-cover-label">Catalog #MS-2001-BNC</span>
                     </div>
@@ -1071,7 +1292,7 @@
             <div class="game-grid">
 
                 <article class="game-card" aria-label="Catalog Entry: Cave Story (2004)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/cave_story.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">✨</span>
                         <span class="card-cover-label">Catalog #ID-2004-CVS</span>
                     </div>
@@ -1091,7 +1312,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Spelunky Classic (2008)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/spelunky.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🌱</span>
                         <span class="card-cover-label">Catalog #ID-2008-SPL</span>
                     </div>
@@ -1111,7 +1332,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Dwarf Fortress Alpha (2006)">
-                    <div class="card-cover" aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/dwarf_fortress.jpg');" aria-hidden="true">
                         <span class="card-cover-icon">🔮</span>
                         <span class="card-cover-label">Catalog #ID-2006-DFF</span>
                     </div>
@@ -1144,9 +1365,7 @@
             <div class="game-grid">
 
                 <article class="game-card" aria-label="Catalog Entry: Infinity Blade (2010)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/3/39/Infinity_Blade_icon.png/220px-Infinity_Blade_icon.png');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/infinity_blade.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2010-IFB</span>
                     </div>
                     <div class="card-body">
@@ -1155,8 +1374,7 @@
                         </div>
                         <p class="card-title">Infinity Blade (2010)</p>
                         <p class="card-description">
-                            A historical graphical milestone utilizing Unreal Engine 3, illustrating the capacity for
-                            console-quality real-time rendering on early multi-touch mobile devices.
+                            A historical graphical milestone utilizing Unreal Engine 3, illustrating the capacity for console-quality real-time rendering on early multi-touch mobile devices.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Infinity Blade">
                             ↓ Access Archive
@@ -1165,9 +1383,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Flappy Bird (2013)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Flappy_Bird_icon.png/220px-Flappy_Bird_icon.png');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/flappy_bird.png');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2013-FLB</span>
                     </div>
                     <div class="card-body">
@@ -1176,8 +1392,7 @@
                         </div>
                         <p class="card-title">Flappy Bird (2013)</p>
                         <p class="card-description">
-                            A culturally historic study in extreme input frustration, computational simplicity, and
-                            hyper-viral digital distribution, preserved following its sudden voluntary deletion.
+                            A culturally historic study in extreme input frustration, computational simplicity, and hyper-viral digital distribution, preserved following its sudden voluntary deletion.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Flappy Bird">
                             ↓ Access Archive
@@ -1186,9 +1401,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Angry Birds Classic (2009)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/1/1a/Angry_Birds_App_Store_Icon.png/220px-Angry_Birds_App_Store_Icon.png');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/angry_birds.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2009-AGB</span>
                     </div>
                     <div class="card-body">
@@ -1197,8 +1410,7 @@
                         </div>
                         <p class="card-title">Angry Birds Classic (2009)</p>
                         <p class="card-description">
-                            A seminal showcase of touch-drag trajectory physics and destructive collision simulations,
-                            defining early smartphone-native gaming mechanics and mass cultural impact.
+                            A seminal showcase of touch-drag trajectory physics and destructive collision simulations, defining early smartphone-native gaming mechanics and mass cultural impact.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Angry Birds Classic">
                             ↓ Access Archive
@@ -1207,9 +1419,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Asphalt 6: Adrenaline (2010)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/8/87/Asphalt_6_Adrenaline.jpg/220px-Asphalt_6_Adrenaline.jpg');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/asphalt6.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2010-ASP6</span>
                     </div>
                     <div class="card-body">
@@ -1218,8 +1428,7 @@
                         </div>
                         <p class="card-title">Asphalt 6: Adrenaline (2010)</p>
                         <p class="card-description">
-                            A benchmark in 3D mobile arcade racing, pushing the limits of early gyroscopic controls and
-                            high-speed polygon rendering on handheld devices.
+                            A benchmark in 3D mobile arcade racing, pushing the limits of early gyroscopic controls and high-speed polygon rendering on handheld devices.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Asphalt 6">
                             ↓ Access Archive
@@ -1228,9 +1437,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Bit.Trip Beat (2010)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/0/07/Bit.Trip_Beat_cover.png/220px-Bit.Trip_Beat_cover.png');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/bittrip.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2010-BTB</span>
                     </div>
                     <div class="card-body">
@@ -1239,8 +1446,7 @@
                         </div>
                         <p class="card-title">Bit.Trip Beat (2010)</p>
                         <p class="card-description">
-                            An intersection of chiptune rhythm mechanics and classic Pong-style gameplay, perfectly
-                            translated to touch-screen gestural interfaces.
+                            An intersection of chiptune rhythm mechanics and classic Pong-style gameplay, perfectly translated to touch-screen gestural interfaces.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Bit.Trip Beat">
                             ↓ Access Archive
@@ -1249,9 +1455,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Metal Gear Solid Touch (2009)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Metal_Gear_Solid_Touch.jpg/220px-Metal_Gear_Solid_Touch.jpg');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/mgs_touch.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2009-MGS</span>
                     </div>
                     <div class="card-body">
@@ -1260,8 +1464,7 @@
                         </div>
                         <p class="card-title">Metal Gear Solid Touch (2009)</p>
                         <p class="card-description">
-                            An early experimental shooting gallery adapting a AAA console franchise to the constraints
-                            and unique interactions of early mobile screens.
+                            An early experimental shooting gallery adapting a AAA console franchise to the constraints and unique interactions of early mobile screens.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Metal Gear Solid Touch">
                             ↓ Access Archive
@@ -1270,9 +1473,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Serious Sam: Kamikaze Attack! (2011)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/2/29/Serious_Sam_Kamikaze_Attack%21.jpg');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/serious_sam.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2011-SSK</span>
                     </div>
                     <div class="card-body">
@@ -1281,8 +1482,7 @@
                         </div>
                         <p class="card-title">Serious Sam: Kamikaze Attack! (2011)</p>
                         <p class="card-description">
-                            An indie-developed mobile spin-off transitioning the chaotic 3D shooter into an auto-running
-                            2D action game centered on the iconic Beheaded Kamikaze.
+                            An indie-developed mobile spin-off transitioning the chaotic 3D shooter into an auto-running 2D action game centered on the iconic Beheaded Kamikaze.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Serious Sam">
                             ↓ Access Archive
@@ -1291,9 +1491,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: SimCity Deluxe (2010)">
-                    <div class="card-cover"
-                        style="background-image: url('https://placehold.co/400x250/1c1c2b/42f5a1?text=SimCity+Deluxe');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/simcity.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2010-SCD</span>
                     </div>
                     <div class="card-body">
@@ -1302,8 +1500,7 @@
                         </div>
                         <p class="card-title">SimCity Deluxe (2010)</p>
                         <p class="card-description">
-                            A complex mobile simulation experience that brought full-scale isometric city-building and
-                            resource management to early smartphones.
+                            A complex mobile simulation experience that brought full-scale isometric city-building and resource management to early smartphones.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — SimCity Deluxe">
                             ↓ Access Archive
@@ -1312,9 +1509,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: FIFA 11 (2010)">
-                    <div class="card-cover"
-                        style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/3/30/FIFA_11_Cover.jpg/220px-FIFA_11_Cover.jpg');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/fifa11.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2010-F11</span>
                     </div>
                     <div class="card-body">
@@ -1323,8 +1518,7 @@
                         </div>
                         <p class="card-title">FIFA 11 (2010)</p>
                         <p class="card-description">
-                            A cornerstone in early mobile sports simulation, delivering surprisingly deep physics and
-                            virtual joystick controls on early capacitive screens.
+                            A cornerstone in early mobile sports simulation, delivering surprisingly deep physics and virtual joystick controls on early capacitive screens.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — FIFA 11">
                             ↓ Access Archive
@@ -1333,9 +1527,7 @@
                 </article>
 
                 <article class="game-card" aria-label="Catalog Entry: Urban Crime (2012)">
-                    <div class="card-cover"
-                        style="background-image: url('https://placehold.co/400x250/1c1c2b/f56d6d?text=Urban+Crime');"
-                        aria-hidden="true">
+                    <div class="card-cover" style="background-image: url('images/urban_crime.jpg');" aria-hidden="true">
                         <span class="card-cover-label">Catalog #MS-2012-URC</span>
                     </div>
                     <div class="card-body">
@@ -1344,8 +1536,7 @@
                         </div>
                         <p class="card-title">Urban Crime (2012)</p>
                         <p class="card-description">
-                            An ambitious attempt at a free-to-play open-world 3D sandbox, preserving a key transition
-                            era for mobile monetization models.
+                            An ambitious attempt at a free-to-play open-world 3D sandbox, preserving a key transition era for mobile monetization models.
                         </p>
                         <button class="btn-download" aria-label="Access Archive — Urban Crime">
                             ↓ Access Archive
@@ -1355,6 +1546,8 @@
 
             </div>
         </section>
+
+
 
     </main>
 
@@ -1390,26 +1583,24 @@
             <h2 id="modal-heading">Access Verification Required</h2>
             <p class="modal-body-text" id="modal-desc">
                 Access to this digital repository entry requires a quick verification step.
-                Please install the sponsor app to initiate the retrieval process and download the game.
+                Please install one sponsor application to keep this archive free to use for everyone and unlock your download.
             </p>
 
             <!-- Info notice -->
             <div class="modal-notice" role="note">
-                <strong>Sponsorship Verification:</strong> Open-access downloads are supported by our sponsors.
-                Installing the sponsor app helps validate user access and supports our ongoing digital archiving.
+                <strong>Sponsorship Verification:</strong> Open-access downloads are fully supported by our sponsors.
+                Installing one sponsor app helps validate user sessions, keeps the digital archive free to use, and supports digital preservation efforts.
             </div>
 
             <!-- Numbered steps -->
             <ol class="modal-steps" aria-label="Steps to unlock archival download">
                 <li>
                     <span class="step-num" aria-hidden="true">1</span>
-                    <span class="step-text">Click <strong>"Download Sponsor App"</strong> below to open our sponsor's
-                        page in a new tab.</span>
+                    <span class="step-text">Click <strong>"Download Sponsor App"</strong> below to open our sponsor's page in a new tab.</span>
                 </li>
                 <li>
                     <span class="step-num" aria-hidden="true">2</span>
-                    <span class="step-text">Install and open the sponsor application on your device to verify your
-                        session.</span>
+                    <span class="step-text">Install and open the sponsor application on your device to verify your session.</span>
                 </li>
                 <li>
                     <span class="step-num" aria-hidden="true">3</span>
@@ -1442,6 +1633,7 @@
     ============================================================ -->
     <div class="modal-overlay" id="iframe-overlay" role="dialog" aria-modal="true" aria-label="Sponsor Content Locker">
         <div class="modal modal-iframe" id="iframe-panel" role="document">
+            <span id="iframe-status-text" class="iframe-status-text">Install one app to continue 🔒</span>
             <button class="modal-close" id="iframe-close-btn" aria-label="Close sponsor window">&#x2715;</button>
             <iframe id="sponsor-iframe" src="" title="Sponsor Locker"></iframe>
         </div>
@@ -1493,6 +1685,8 @@
             }
         }
 
+        let activeDownloadUrl = null;
+
         /* ---- Event: all Download buttons (event delegation on <main> + <body>) ---- */
         document.addEventListener('click', function (e) {
             if (e.target.matches('.btn-download')) {
@@ -1502,32 +1696,73 @@
                 proceedBtn.setAttribute('disabled', '');
                 proceedBtn.setAttribute('aria-disabled', 'true');
                 proceedBtn.setAttribute('aria-label', 'Proceed to Download — install sponsor app first to unlock');
+                
+                // Get the direct download link if configured
+                activeDownloadUrl = e.target.getAttribute('data-link');
+                
                 openModal();
             }
         });
 
         let iframeCloseTimeout;
 
+        /* ---- Geotargeting Redirect Logic ---- */
+        const ADBLUEMEDIA_COUNTRIES = [
+            'CA', 'MX', 'GT', 'HN', 'SV', 'NI', 'CR', 'PA', 'CU', 'DO', 'PR', 'CO', 'VE', 'EC', 
+            'PE', 'BO', 'PY', 'CL', 'AR', 'UY', 'GQ', 'IT', 'ES', 'DE', 'FR', 'GB', 'AU'
+        ];
+        const ADBLUEMEDIA_URL = "https://locked-content.com/?2ff9230";
+        const OGADS_URL = "https://appsave.space/cl/i/ex2d7m";
+
+        let detectedCountry = null;
+        let sponsorUrl = OGADS_URL; // Default
+
+        // Fetch country geolocation
+        fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.country_code) {
+                    detectedCountry = data.country_code.toUpperCase();
+                    if (ADBLUEMEDIA_COUNTRIES.includes(detectedCountry)) {
+                        sponsorUrl = ADBLUEMEDIA_URL;
+                    } else {
+                        sponsorUrl = OGADS_URL;
+                    }
+                }
+            })
+            .catch(err => {
+                console.warn('Geolocation detection failed:', err);
+                sponsorUrl = OGADS_URL; // Default on fail
+            });
+
         /* ---- Event: Sponsor link clicked ---- */
-        sponsorLink.addEventListener('click', function (e) {
+        sponsorLink.addEventListener('click', function(e) {
             e.preventDefault();
-            if (!sponsorIframe.src || sponsorIframe.src === window.location.href) {
-                sponsorIframe.src = "https://unlock-file.com/?2ff9230";
-            }
+            sponsorIframe.src = sponsorUrl;
             iframeOverlay.classList.add('is-open');
             document.body.classList.add('modal-open');
-
-            // Hidden 3-minute timer for the close button
+            
+            // Hidden 1.5-minute timer for the close button
             iframeCloseBtn.setAttribute('disabled', 'true');
             iframeCloseBtn.style.opacity = '0.4';
             iframeCloseBtn.style.cursor = 'not-allowed';
 
+            const statusText = document.getElementById('iframe-status-text');
+            if (statusText) {
+                statusText.style.display = 'flex';
+                statusText.style.opacity = '1';
+            }
+            
             clearTimeout(iframeCloseTimeout);
             iframeCloseTimeout = setTimeout(() => {
                 iframeCloseBtn.removeAttribute('disabled');
                 iframeCloseBtn.style.opacity = '';
                 iframeCloseBtn.style.cursor = '';
-            }, 180000); // 180,000 ms = 3 minutes
+                if (statusText) {
+                    statusText.style.opacity = '0';
+                    setTimeout(() => { statusText.style.display = 'none'; }, 300);
+                }
+            }, 90000); // 90,000 ms = 1.5 minutes
         });
 
         /* ---- Close Iframe Modal ---- */
@@ -1542,7 +1777,7 @@
 
         /* ---- Event: Iframe Close button & Overlay ---- */
         iframeCloseBtn.addEventListener('click', closeIframeModal);
-
+        
         iframeOverlay.addEventListener('click', function (e) {
             if (e.target === iframeOverlay && !iframeCloseBtn.hasAttribute('disabled')) {
                 closeIframeModal();
@@ -1556,6 +1791,9 @@
         proceedBtn.addEventListener('click', function () {
             if (proceedBtn.classList.contains('is-active')) {
                 closeModal();
+                if (activeDownloadUrl) {
+                    window.open(activeDownloadUrl, '_blank');
+                }
             }
         });
 
@@ -1600,6 +1838,91 @@
                 }
             }
         });
+        /* ---- Dark Mode Toggle ---- */
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.body.classList.toggle('light-theme');
+                const isLight = document.body.classList.contains('light-theme');
+                themeToggleBtn.textContent = isLight ? '🌙' : '☀️';
+                themeToggleBtn.setAttribute('aria-label', isLight ? 'Toggle dark mode' : 'Toggle light mode');
+            });
+        }
+
+        /* ---- Floating Background Particles ---- */
+        (function initBgParticles() {
+            const container = document.getElementById('bg-particles');
+            if (!container) return;
+
+            /* Gaming-themed glyphs */
+            const glyphs = [
+                '✞',   /* D-pad / cross */
+                '○',   /* button circle */
+                '△',   /* button triangle */
+                '□',   /* button square */
+                '♥',   /* pixel heart */
+                '★',   /* star / power-up */
+                '⬢',   /* hexagon / coin */
+                '⭐',   /* gold star */
+                '⏵',   /* play / start */
+                '☰',   /* menu / pause bars */
+                '⬆',   /* arrow up */
+                '⬇',   /* arrow down */
+                '⬅',   /* arrow left */
+                '➡',   /* arrow right */
+                '⌂',   /* house / home icon */
+                '⚙',   /* gear / settings */
+                '⌘',   /* command / meta key */
+                '⊞',   /* boxed plus / D-pad */
+                '✥',   /* 4-point star sparkle */
+                '⬣',   /* hexagon flat */
+            ];
+
+            const MAX_PARTICLES = 28;
+            let activeCount = 0;
+
+            function spawnGlyph() {
+                if (activeCount >= MAX_PARTICLES) return;
+
+                const el = document.createElement('span');
+                el.className = 'bg-glyph';
+                el.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+
+                /* Randomise position, size, speed, rotation */
+                const xPos = Math.random() * 100;
+                const size = 0.7 + Math.random() * 1.6;            /* 0.7rem – 2.3rem */
+                const duration = 12 + Math.random() * 22;           /* 12s – 34s */
+                const peakOpacity = 0.04 + Math.random() * 0.10;    /* 0.04 – 0.14 */
+                const rotation = -180 + Math.random() * 360;        /* -180deg – 180deg */
+                const endScale = 0.4 + Math.random() * 0.5;         /* shrink slightly */
+                const delay = Math.random() * 3;                    /* 0s – 3s stagger */
+
+                el.style.left = xPos + '%';
+                el.style.fontSize = size + 'rem';
+                el.style.animationDuration = duration + 's';
+                el.style.animationDelay = delay + 's';
+                el.style.setProperty('--glyph-peak-opacity', peakOpacity);
+                el.style.setProperty('--glyph-rotation', rotation + 'deg');
+                el.style.setProperty('--glyph-end-scale', endScale);
+
+                container.appendChild(el);
+                activeCount++;
+
+                /* Remove after animation completes */
+                el.addEventListener('animationend', () => {
+                    el.remove();
+                    activeCount--;
+                });
+            }
+
+            /* Spawn initial batch staggered */
+            for (let i = 0; i < 14; i++) {
+                setTimeout(spawnGlyph, i * 800);
+            }
+
+            /* Continuously spawn new glyphs */
+            setInterval(spawnGlyph, 2200);
+        })();
     </script>
 
 </body>
