@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Game Archive" />
+    <title id="page-title">Loading… — The Game Repository</title>
+    <script src="api.js" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* ============================================================
+            GAME DETAIL PAGE - Specific styles
+         ============================================================ */
+      .detail-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        min-height: calc(100vh - 80px);
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        color: var(--color-accent);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: opacity var(--dur-fast);
+      }
+
+      .back-link:hover {
+        opacity: 0.75;
+        text-decoration: underline;
+      }
+
+      .detail-loading,
+      .detail-error {
+        text-align: center;
+        padding: 6rem 2rem;
+        color: var(--color-muted);
+        font-size: 1.1rem;
+      }
+
+      .detail-error a {
+        display: inline-block;
+        margin-top: 1rem;
+        color: var(--color-accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .detail-error a:hover {
+        text-decoration: underline;
+      }
+
+      .detail-hero {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 3rem;
+        margin-bottom: 3rem;
+        align-items: start;
+      }
+
+      .detail-cover {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        background-size: cover;
+        background-position: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        position: relative;
+      }
+
+      .detail-cover-icon {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        font-size: 2rem;
+        background: rgba(0, 0, 0, 0.6);
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .detail-info {
+        padding-top: 0.5rem;
+      }
+
+      .detail-badge-new {
+        display: inline-block;
+        background: linear-gradient(135deg, #a855f7, #7c6dfa);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        padding: 0.25rem 0.65rem;
+        border-radius: 4px;
+        margin-bottom: 0.75rem;
+      }
+
+      .detail-info h1 {
+        font-size: 2.5rem;
+        line-height: 1.15;
+        margin: 0 0 0.5rem;
+        color: #fff;
+        font-weight: 800;
+      }
+
+      .detail-publisher {
+        color: var(--color-muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 0 0 1.25rem;
+        font-weight: 600;
+      }
+
+      .detail-publisher span {
+        color: #fff;
+      }
+
+      .detail-rating {
+        color: #a855f7;
+        font-weight: 700;
+        margin: 0 0 1.5rem;
+        font-size: 1.05rem;
+      }
+
+      .detail-rating .rating-count {
+        color: var(--color-muted);
+        font-size: 0.85rem;
+        font-weight: 400;
+        margin-left: 0.4rem;
+      }
+
+      .detail-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin: 1.75rem 0;
+      }
+
+      .detail-meta-item {
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 0.85rem 1rem;
+      }
+
+      .detail-meta-item label {
+        display: block;
+        color: var(--color-muted);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.3rem;
+        font-weight: 600;
+      }
+
+      .detail-meta-item span {
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.95rem;
+        word-break: break-word;
+      }
+
+      .detail-actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin: 2rem 0 0.5rem;
+      }
+
+      .detail-actions .btn-play {
+        flex: 1;
+        min-width: 200px;
+        justify-content: center;
+      }
+
+      .detail-description {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 1.75rem;
+        margin-bottom: 2rem;
+      }
+
+      .detail-description h2 {
+        margin: 0 0 1rem;
+        font-size: 1.25rem;
+        color: #fff;
+      }
+
+      .detail-description p {
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.7;
+        margin: 0;
+      }
+
+      .detail-screenshots {
+        margin-bottom: 2rem;
+      }
+
+      .detail-screenshots h2 {
+        margin: 0 0 1.25rem;
+        font-size: 1.25rem;
+        color: #fff;
+      }
+
+      .screenshots-grid {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 0.75rem;
+      }
+
+      .screenshot {
+        min-width: 320px;
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 8px;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      @media (max-width: 768px) {
+        .detail-hero {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        .detail-cover {
+          max-width: 320px;
+          margin: 0 auto;
+        }
+        .detail-info h1 {
+          font-size: 1.85rem;
+        }
+        .detail-meta-grid {
+          grid-template-columns: 1fr;
+        }
+        .screenshot {
+          min-width: 260px;
+          height: 160px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="bg-particles" aria-hidden="true"></div>
+
+    <!-- ============================================================
+        HEADER
+    ============================================================ -->
+    <header>
+      <nav aria-label="Main navigation">
+        <a
+          href="index.html"
+          class="nav-logo-container"
+          aria-label="The Game Repository Home"
+        >
+          <svg
+            class="logo-svg"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="100%" stop-color="#7c6dfa" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M16 2L4 8v16l12 6 12-6V8L16 2z"
+              stroke="url(#logo-grad)"
+              stroke-width="2"
+              fill="none"
+            />
+            <circle cx="16" cy="16" r="4" fill="url(#logo-grad)" />
+          </svg>
+          <span class="logo-text">TGR</span>
+        </a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          ☀️
+        </button>
+        <ul class="nav-links">
+          <li><a href="index.html#library">Library</a></li>
+          <li><a href="index.html#trending">Trending</a></li>
+          <li><a href="index.html#how">How it Works</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="detail-page">
+      <a href="index.html" class="back-link">← Back to library</a>
+
+      <div id="detail-loading" class="detail-loading">Loading game…</div>
+
+      <div id="detail-error" class="detail-error" hidden>
+        <p>Game not found.</p>
+        <a href="index.html">← Back to library</a>
+      </div>
+
+      <article id="detail-content" hidden>
+        <section class="detail-hero">
+          <div class="detail-cover" id="detail-cover" aria-hidden="true">
+            <span class="detail-cover-icon" id="detail-cover-icon">🎮</span>
+          </div>
+          <div class="detail-info">
+            <span class="detail-badge-new" id="detail-badge-new" hidden
+              >NEW</span
+            >
+            <h1 id="detail-title">—</h1>
+            <p class="detail-publisher">
+              BY <span id="detail-publisher-name">—</span>
+            </p>
+            <p class="detail-rating">
+              <span id="detail-stars">★★★★☆</span>
+              <span id="detail-rating-value">—</span>
+              <span class="rating-count"
+                >(<span id="detail-rating-count">0</span> reviews)</span
+              >
+            </p>
+
+            <div class="detail-meta-grid">
+              <div class="detail-meta-item">
+                <label>Catalog</label>
+                <span id="detail-catalog">—</span>
+              </div>
+              <div class="detail-meta-item">
+                <label>Genres</label>
+                <span id="detail-genres">—</span>
+              </div>
+              <div class="detail-meta-item">
+                <label>Cloud Status</label>
+                <span id="detail-cloud">—</span>
+              </div>
+              <div class="detail-meta-item">
+                <label>Players Online</label>
+                <span id="detail-players">—</span>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button
+                class="btn-play btn-stream-trigger"
+                id="detail-play-btn"
+                aria-label="Play Now — Cloud Stream"
+              >
+                <span class="btn-play-icon">▶</span> Play Now — Cloud Stream
+              </button>
+              <button class="btn-wishlist" id="detail-wishlist-btn">
+                ♡ Wishlist
+              </button>
+              <button class="btn-share" id="detail-share-btn">📋 Copy Link</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-description">
+          <h2>About this game</h2>
+          <p id="detail-description-text">
+            No description available for this title yet.
+          </p>
+        </section>
+
+        <section
+          class="detail-screenshots"
+          id="detail-screenshots-section"
+          hidden
+        >
+          <h2>Screenshots</h2>
+          <div class="screenshots-grid" id="detail-screenshots-grid"></div>
+        </section>
+      </article>
+    </main>
+
+    <!-- ============================================================
+        MODAL — Configure Streaming Session
+    ============================================================ -->
+    <div
+      class="modal-overlay"
+      id="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-heading"
+      aria-describedby="modal-desc"
+    >
+      <div class="modal" id="modal-panel" role="document">
+        <button
+          class="modal-close"
+          id="modal-close-btn"
+          aria-label="Close modal"
+        >
+          &#x2715;
+        </button>
+
+        <div class="modal-game-title" id="modal-game-title">SELECTED GAME</div>
+        <h2 id="modal-heading">Configure Streaming Session</h2>
+
+        <!-- Graphic Quality -->
+        <div class="config-group">
+          <label class="config-label">GRAPHICS QUALITY</label>
+          <select class="config-select">
+            <option>Balanced (1080p, High settings)</option>
+            <option>Performance (720p, Ultra settings)</option>
+            <option>Fidelity (4K, Ultra settings)</option>
+          </select>
+        </div>
+
+        <!-- Frame Rate -->
+        <div class="config-group">
+          <label class="config-label">FRAME RATE LIMIT</label>
+          <select class="config-select">
+            <option>60 FPS (Silky Smooth)</option>
+            <option>30 FPS (Console Cinematic)</option>
+            <option>120 FPS (Competitive)</option>
+          </select>
+        </div>
+
+        <!-- Streaming Server GPU Allocation -->
+        <div class="config-group">
+          <label class="config-label">STREAMING SERVER GPU ALLOCATION</label>
+
+          <div class="server-option selected">
+            <div class="server-info">
+              <h4>NVIDIA RTX 2060</h4>
+              <p>Ping: 12ms &middot; US-East Nodes</p>
+            </div>
+            <div class="server-status status-free">8 Free</div>
+          </div>
+          <div class="server-option">
+            <div class="server-info">
+              <h4>NVIDIA RTX 3060</h4>
+              <p>Ping: 18ms &middot; US-East Nodes</p>
+            </div>
+            <div class="server-status status-free">18 Free</div>
+          </div>
+
+          <div class="server-option locked">
+            <div class="server-info">
+              <h4>NVIDIA RTX 4080</h4>
+              <p>Ping: 32ms &middot; Backup Node</p>
+            </div>
+            <div class="server-status status-locked">Locked 🔒</div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="modal-actions">
+          <button
+            id="sponsor-link"
+            class="btn-launch"
+            aria-label="Confirm Config & Launch"
+          >
+            Confirm Config & Launch
+          </button>
+        </div>
+      </div>
+      <!-- /.modal -->
+    </div>
+    <!-- /.modal-overlay -->
+
+    <!-- ============================================================
+        MODAL - Server Queue
+    ============================================================ -->
+    <div
+      class="modal-overlay"
+      id="queue-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="queue-heading"
+    >
+      <div class="modal" id="queue-panel" role="document">
+        <button
+          class="modal-close"
+          id="queue-close-btn"
+          aria-label="Close queue window"
+        >
+          &#x2715;
+        </button>
+
+        <div class="queue-header-container">
+          <div class="queue-icon">⏳</div>
+          <h2 id="queue-heading" style="margin-bottom: 0.25rem">
+            Server at Capacity
+          </h2>
+          <p
+            class="modal-body-text"
+            style="
+              color: var(--color-muted);
+              font-size: 0.85rem;
+              margin-bottom: 0;
+              text-align: center;
+            "
+          >
+            The selected cloud streaming pod is currently full.
+          </p>
+        </div>
+
+        <!-- Queue Progress and Stats -->
+        <div class="queue-stats-container">
+          <div>
+            <div class="queue-stat-label">Players Waiting</div>
+            <div class="queue-stat-value" id="queue-players">---</div>
+          </div>
+          <div>
+            <div class="queue-stat-label">Estimated Wait</div>
+            <div class="queue-stat-value wait-time" id="queue-time">
+              --:--:--
+            </div>
+          </div>
+        </div>
+
+        <div class="queue-progress-wrapper">
+          <div class="queue-progress-info">
+            <span>Queue Progress</span>
+            <span id="queue-progress-pct">--%</span>
+          </div>
+          <div class="queue-progress-bar-bg">
+            <div class="queue-progress-bar-fill" id="queue-progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="queue-console-title">
+          <span>Live Connection Logs</span>
+          <span style="color: #42f5a1; display: flex; align-items: center; gap: 4px">
+            <span
+              style="
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                background: #42f5a1;
+                border-radius: 50%;
+                animation: pulse-new 1.5s infinite;
+              "
+            ></span>
+            Live Connection
+          </span>
+        </div>
+        <div class="queue-console" id="queue-console-log">
+          <!-- Live logs injected here -->
+        </div>
+
+        <!-- Bypass Section -->
+        <div class="queue-bypass-card">
+          <span class="bypass-badge">POPULAR DIRECT BYPASS</span>
+          <h3 class="bypass-title">Skip The Queue Instantly</h3>
+          <p class="bypass-desc">
+            Complete partner offers to verify your account, collect 100 Priority
+            Points, and bypass the wait.
+          </p>
+          <div class="bypass-benefits">
+            <div class="bypass-benefit-item">
+              <span class="icon">✓</span> Zero Wait Time
+            </div>
+            <div class="bypass-benefit-item">
+              <span class="icon">✓</span> RTX 4080 GPU
+            </div>
+            <div class="bypass-benefit-item">
+              <span class="icon">✓</span> Ultra 4K Resolution
+            </div>
+            <div class="bypass-benefit-item">
+              <span class="icon">✓</span> Max 120 FPS Limit
+            </div>
+          </div>
+          <button
+            id="skip-queue-btn"
+            class="btn-skip-pulse"
+            aria-label="Skip Queue Now"
+          >
+            ⚡ Skip Queue & Play Now
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+        MODAL — Sponsor Content Locker (Iframe)
+    ============================================================ -->
+    <div
+      class="modal-overlay"
+      id="iframe-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sponsor Content Locker"
+    >
+      <div class="modal modal-iframe" id="iframe-panel" role="document">
+        <span id="iframe-status-text" class="iframe-status-text">Collect points by completing offers 🔒</span>
+        <button
+          class="modal-close"
+          id="iframe-close-btn"
+          aria-label="Close sponsor window"
+        >
+          &#x2715;
+        </button>
+        <iframe id="sponsor-iframe" src="" title="Sponsor Locker"></iframe>
+        <div
+          style="
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+          "
+        >
+          <a
+            id="iframe-fallback-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="color: var(--color-accent); text-decoration: none; font-weight: 500;"
+            >Locker not loading? Open in new tab ↗</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+        MODAL — First-Time Welcome Locker
+    ============================================================ -->
+    <div
+      class="modal-overlay"
+      id="welcome-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="welcome-heading"
+      aria-describedby="welcome-desc"
+    >
+      <div class="modal" id="welcome-panel" role="document">
+        <button
+          class="modal-close"
+          id="welcome-close-btn"
+          aria-label="Close welcome window"
+        >
+          &#x2715;
+        </button>
+        <div class="modal-icon">🚀</div>
+        <div class="modal-game-title">System Initialization</div>
+        <h2 id="welcome-heading">Cloud Gaming Configuration</h2>
+
+        <div id="welcome-desc" class="modal-notice">
+          Welcome to <strong>The Game Repository</strong>! Before starting your
+          first high-performance streaming session, please review the
+          requirements.
+        </div>
+
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+          "
+        >
+          <div class="welcome-info-card">
+            <div class="welcome-info-icon">🎮</div>
+            <div class="welcome-info-content">
+              <h4>Input Support</h4>
+              <p>
+                Play seamlessly using a <strong>physical controller</strong>
+                (Bluetooth/USB) or our interactive
+                <strong>virtual gamepad</strong> optimized for touch and mobile
+                screens.
+              </p>
+            </div>
+          </div>
+
+          <div class="welcome-info-card">
+            <div class="welcome-info-icon">⚡</div>
+            <div class="welcome-info-content">
+              <h4>Network Requirements</h4>
+              <p>
+                Real-time video streaming requires a stable connection of at
+                least <strong>15 Mbps</strong>. Please verify your current speed
+                before playing.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <a
+            href="https://fast.com"
+            target="_blank"
+            class="btn-play"
+            style="
+              background: var(--color-accent);
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: var(--space-2);
+              box-shadow: 0 4px 12px var(--color-accent-glow);
+            "
+          >
+            <span>Verify Connection Speed</span>
+            <span style="font-size: 0.85rem">↗</span>
+          </a>
+          <button
+            class="btn-launch"
+            id="welcome-proceed-btn"
+            style="margin-top: 0; background: #a855f7"
+          >
+            Let's Play
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ---- Modal elements ---- */
+      const overlay = document.getElementById('modal-overlay');
+      const panel = document.getElementById('modal-panel');
+      const closeBtn = document.getElementById('modal-close-btn');
+      const sponsorLink = document.getElementById('sponsor-link');
+
+      const queueOverlay = document.getElementById('queue-overlay');
+      const queueCloseBtn = document.getElementById('queue-close-btn');
+      const skipQueueBtn = document.getElementById('skip-queue-btn');
+
+      const iframeOverlay = document.getElementById('iframe-overlay');
+      const iframeCloseBtn = document.getElementById('iframe-close-btn');
+      const sponsorIframe = document.getElementById('sponsor-iframe');
+
+      /* ---- Welcome Modal elements ---- */
+      const welcomeOverlay = document.getElementById('welcome-overlay');
+      const welcomePanel = document.getElementById('welcome-panel');
+      const welcomeCloseBtn = document.getElementById('welcome-close-btn');
+      const welcomeProceedBtn = document.getElementById('welcome-proceed-btn');
+
+      /* ---- State ---- */
+      let sponsorVisited = false;
+
+      /* ---- Welcome Modal First-Time Visit Check & Event Handlers ---- */
+      function closeWelcomeModal() {
+        welcomeOverlay.classList.remove('is-open');
+        localStorage.setItem('tgr_visited', 'true');
+        if (
+          !overlay.classList.contains('is-open') &&
+          !queueOverlay.classList.contains('is-open') &&
+          !iframeOverlay.classList.contains('is-open')
+        ) {
+          document.body.classList.remove('modal-open');
+        }
+      }
+
+      if (welcomeCloseBtn) {
+        welcomeCloseBtn.addEventListener('click', closeWelcomeModal);
+      }
+      if (welcomeProceedBtn) {
+        welcomeProceedBtn.addEventListener('click', closeWelcomeModal);
+      }
+      if (welcomeOverlay) {
+        welcomeOverlay.addEventListener('click', function (e) {
+          if (!welcomePanel.contains(e.target)) {
+            closeWelcomeModal();
+          }
+        });
+
+        welcomeOverlay.addEventListener('keydown', function (e) {
+          if (e.key !== 'Tab') return;
+          const focusable = welcomePanel.querySelectorAll(
+            'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+          );
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        });
+      }
+
+      function checkFirstVisit() {
+        if (!localStorage.getItem('tgr_visited')) {
+          welcomeOverlay.classList.add('is-open');
+          document.body.classList.add('modal-open');
+          if (welcomeProceedBtn) welcomeProceedBtn.focus();
+        }
+      }
+
+      if (welcomeOverlay) {
+        checkFirstVisit();
+      }
+
+      /* ---- Open modal ---- */
+      function openModal() {
+        overlay.classList.add('is-open');
+        document.body.classList.add('modal-open');
+        closeBtn.focus();
+      }
+
+      /* ---- Close modal ---- */
+      function closeModal() {
+        overlay.classList.remove('is-open');
+        document.body.classList.remove('modal-open');
+      }
+
+      let activeDownloadUrl = null;
+
+      /* ---- Server Option Selection ---- */
+      const serverOptions = document.querySelectorAll('.server-option');
+      serverOptions.forEach((opt) => {
+        opt.addEventListener('click', () => {
+          if (opt.classList.contains('locked')) return;
+          serverOptions.forEach((o) => o.classList.remove('selected'));
+          opt.classList.add('selected');
+        });
+      });
+
+      /* ---- Event: all Play buttons (detail page play button) ---- */
+      document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-stream-trigger');
+        if (btn) {
+          sponsorVisited = false;
+          activeDownloadUrl = btn.getAttribute('data-link');
+          const titleAttr = btn.getAttribute('data-title');
+          if (titleAttr) {
+            const titleEl = document.getElementById('modal-game-title');
+            if (titleEl) titleEl.textContent = titleAttr;
+          }
+          openModal();
+        }
+      });
+
+      let iframeCloseTimeout;
+
+      /* ---- Sponsor Link — all traffic routes to OGAds ---- */
+      const OGADS_URL = 'https://appsave.space/cl/i/ex2d7m';
+      let sponsorUrl = OGADS_URL;
+
+      /* ---- Live Queue Session Variables ---- */
+      let queueInterval = null;
+      let queueLogTimeout = null;
+
+      function addConsoleLog(text, container) {
+        if (!container) return;
+        const line = document.createElement('div');
+        line.className = 'console-line';
+        line.textContent = text;
+        container.appendChild(line);
+        container.scrollTop = container.scrollHeight;
+
+        while (container.childNodes.length > 25) {
+          container.removeChild(container.firstChild);
+        }
+      }
+
+      function initQueueSession() {
+        if (queueInterval) clearInterval(queueInterval);
+        if (queueLogTimeout) clearTimeout(queueLogTimeout);
+
+        let totalSeconds = Math.floor(Math.random() * (9900 - 5400 + 1)) + 5400;
+        let players = Math.floor(Math.random() * (1400 - 800 + 1)) + 3800;
+        let progress = parseFloat((Math.random() * (5.5 - 2.5) + 2.5).toFixed(1));
+
+        const timeEl = document.getElementById('queue-time');
+        const playersEl = document.getElementById('queue-players');
+        const pctEl = document.getElementById('queue-progress-pct');
+        const fillEl = document.getElementById('queue-progress-fill');
+        const consoleEl = document.getElementById('queue-console-log');
+
+        if (consoleEl) consoleEl.innerHTML = '';
+
+        function updateDisplay() {
+          if (timeEl) {
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+            timeEl.textContent = `~${h}h ${m}m ${s}s`;
+          }
+          if (playersEl) {
+            playersEl.textContent = players.toLocaleString();
+          }
+          if (pctEl) {
+            pctEl.textContent = `${progress.toFixed(2)}%`;
+          }
+          if (fillEl) {
+            fillEl.style.width = `${progress.toFixed(2)}%`;
+          }
+        }
+
+        const startTime = new Date();
+        const getTimestampString = (offsetMs) => {
+          const d = new Date(startTime.getTime() - offsetMs);
+          return d.toLocaleTimeString([], { hour12: false });
+        };
+
+        addConsoleLog(
+          `[${getTimestampString(4000)}] Initializing secure session handshake...`,
+          consoleEl
+        );
+        addConsoleLog(
+          `[${getTimestampString(3000)}] Handshake complete. Authenticated user session.`,
+          consoleEl
+        );
+        addConsoleLog(
+          `[${getTimestampString(1500)}] Connected to US-East master node. Rerouting to RTX-2060 pool.`,
+          consoleEl
+        );
+        addConsoleLog(
+          `[${getTimestampString(0)}] Queue placement confirmed. Position: #${players.toLocaleString()}`,
+          consoleEl
+        );
+
+        updateDisplay();
+
+        queueInterval = setInterval(() => {
+          if (totalSeconds > 0) totalSeconds--;
+
+          const roll = Math.random();
+          if (roll < 0.5) {
+            players -= Math.floor(Math.random() * 3) + 1;
+          } else if (roll < 0.6) {
+            players += 1;
+          }
+
+          progress += Math.random() * 0.005;
+          if (progress > 95) progress = 95;
+
+          updateDisplay();
+        }, 1000);
+
+        const logTemplates = [
+          'Connection verified with regional router.',
+          'US-EAST-4 Pod load: 99.8% capacity.',
+          'Bandwidth check: Latency 14ms | Jitter 1.1ms.',
+          'Active player disconnected. Refreshing queue position...',
+          'Node RTX-2060-Pod: Synced graphics buffer.',
+          'Node RTX-2060-Pod: Heartbeat verified.',
+          'Allocating standby host threads...',
+          'Save state partition checked. No corruption detected.',
+          'Packet density evaluation: OK.',
+          'Warning: Peak hours usage limit active.',
+          'Refreshing bypass authorization status...',
+          'Client connection state: STABLE.',
+          'Server temperature: 71C | Cooling fan: 92% capacity.',
+          'Estimated throughput: 55.4 Mbps.',
+          'Ping spike: 32ms. Adjusting stream buffers...'
+        ];
+
+        function addLogLoop() {
+          const delay = Math.floor(Math.random() * (6000 - 3000 + 1)) + 3000;
+          queueLogTimeout = setTimeout(() => {
+            const timeStr = new Date().toLocaleTimeString([], { hour12: false });
+            let template =
+              logTemplates[Math.floor(Math.random() * logTemplates.length)];
+            addConsoleLog(`[${timeStr}] ${template}`, consoleEl);
+            addLogLoop();
+          }, delay);
+        }
+
+        addLogLoop();
+      }
+
+      function closeQueueModal() {
+        queueOverlay.classList.remove('is-open');
+        if (
+          !overlay.classList.contains('is-open') &&
+          !iframeOverlay.classList.contains('is-open')
+        ) {
+          document.body.classList.remove('modal-open');
+        }
+        if (queueInterval) {
+          clearInterval(queueInterval);
+          queueInterval = null;
+        }
+        if (queueLogTimeout) {
+          clearTimeout(queueLogTimeout);
+          queueLogTimeout = null;
+        }
+      }
+
+      /* ---- Event: Sponsor link clicked (Opens Queue) ---- */
+      sponsorLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        overlay.classList.remove('is-open');
+        initQueueSession();
+        queueOverlay.classList.add('is-open');
+        document.body.classList.add('modal-open');
+      });
+
+      queueCloseBtn.addEventListener('click', closeQueueModal);
+
+      /* ---- Event: Skip Queue button clicked ---- */
+      skipQueueBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        closeQueueModal();
+
+        const fallbackLink = document.getElementById('iframe-fallback-link');
+        if (fallbackLink) fallbackLink.href = sponsorUrl;
+
+        sponsorIframe.src = sponsorUrl;
+        iframeOverlay.classList.add('is-open');
+        document.body.classList.add('modal-open');
+
+        iframeCloseBtn.setAttribute('disabled', 'true');
+        iframeCloseBtn.style.opacity = '0.4';
+        iframeCloseBtn.style.cursor = 'not-allowed';
+
+        const statusText = document.getElementById('iframe-status-text');
+        if (statusText) {
+          statusText.style.display = 'flex';
+          statusText.style.opacity = '1';
+        }
+
+        clearTimeout(iframeCloseTimeout);
+        iframeCloseTimeout = setTimeout(() => {
+          iframeCloseBtn.removeAttribute('disabled');
+          iframeCloseBtn.style.opacity = '';
+          iframeCloseBtn.style.cursor = '';
+          if (statusText) {
+            statusText.style.opacity = '0';
+            setTimeout(() => {
+              statusText.style.display = 'none';
+            }, 300);
+          }
+        }, 90000);
+      });
+
+      function closeIframeModal() {
+        iframeOverlay.classList.remove('is-open');
+        if (!overlay.classList.contains('is-open')) {
+          document.body.classList.remove('modal-open');
+        }
+      }
+
+      iframeCloseBtn.addEventListener('click', closeIframeModal);
+
+      iframeOverlay.addEventListener('click', function (e) {
+        if (
+          e.target === iframeOverlay &&
+          !iframeCloseBtn.hasAttribute('disabled')
+        ) {
+          closeIframeModal();
+        }
+      });
+
+      /* ---- Event: Close button ---- */
+      closeBtn.addEventListener('click', closeModal);
+
+      /* ---- Event: Overlay background click (but not panel itself) ---- */
+      overlay.addEventListener('click', function (e) {
+        if (!panel.contains(e.target)) {
+          closeModal();
+        }
+      });
+
+      queueOverlay.addEventListener('click', function (e) {
+        const queuePanel = document.getElementById('queue-panel');
+        if (!queuePanel.contains(e.target)) {
+          closeQueueModal();
+        }
+      });
+
+      /* ---- Event: Escape key ---- */
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if (iframeOverlay.classList.contains('is-open')) {
+            if (!iframeCloseBtn.hasAttribute('disabled')) {
+              closeIframeModal();
+            }
+          } else if (queueOverlay.classList.contains('is-open')) {
+            closeQueueModal();
+          } else if (overlay.classList.contains('is-open')) {
+            closeModal();
+          } else if (
+            welcomeOverlay &&
+            welcomeOverlay.classList.contains('is-open')
+          ) {
+            closeWelcomeModal();
+          }
+        }
+      });
+
+      /* ---- Trap focus inside modal while open ---- */
+      overlay.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        const focusable = panel.querySelectorAll(
+          'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      });
+
+      /* ---- Dark Mode Toggle ---- */
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+          document.body.classList.toggle('light-theme');
+          const isLight = document.body.classList.contains('light-theme');
+          themeToggleBtn.textContent = isLight ? '🌙' : '☀️';
+          themeToggleBtn.setAttribute(
+            'aria-label',
+            isLight ? 'Toggle dark mode' : 'Toggle light mode'
+          );
+        });
+      }
+    </script>
+
+    <script src="game-detail.js" defer></script>
+  </body>
+</html>

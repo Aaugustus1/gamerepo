@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="referrer" content="no-referrer" />
+<title>Admin · The Game Repository</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface-2: #1c1c2b;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --accent: #7c6dfa;
+    --accent-2: #fa6d9a;
+    --accent-strong: #a855f7;
+    --success: #42f5a1;
+    --danger: #f56d6d;
+    --warn: #f59e42;
+    --font-body: 'Trebuchet MS', 'Lucida Sans', sans-serif;
+    --font-mono: 'Courier New', monospace;
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --max-width: 1400px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:0.95rem;line-height:1.55;min-height:100dvh}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% -10%, rgba(124,109,250,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 110%, rgba(168,85,247,0.09) 0%, transparent 55%);pointer-events:none;z-index:0}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  button,input,select,textarea{font:inherit;color:inherit}
+  header{position:sticky;top:0;z-index:50;height:60px;background:rgba(10,10,15,0.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+  header .inner{max-width:var(--max-width);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem}
+  header h1{font-family:var(--font-display);font-size:1.2rem;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  header .user-area{display:flex;align-items:center;gap:0.75rem;font-size:0.85rem;color:var(--muted)}
+  header .user-area strong{color:var(--text)}
+  .layout{max-width:var(--max-width);margin:0 auto;padding:1.5rem;display:grid;grid-template-columns:240px 1fr;gap:1.5rem;position:relative;z-index:1}
+  @media (max-width:800px){.layout{grid-template-columns:1fr}}
+  nav.sidebar{position:sticky;top:80px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:0.75rem;align-self:start;display:flex;flex-direction:column;gap:0.15rem;max-height:calc(100dvh - 100px);overflow-y:auto}
+  @media (max-width:800px){nav.sidebar{position:static;flex-direction:row;flex-wrap:wrap}}
+  nav.sidebar a{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 0.8rem;border-radius:8px;color:var(--muted);font-size:0.88rem;cursor:pointer;transition:all 0.15s}
+  nav.sidebar a:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+  nav.sidebar a.active{background:rgba(168,85,247,0.15);color:var(--accent-strong);border-left:3px solid var(--accent-strong);padding-left:calc(0.8rem - 3px)}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;box-shadow:0 4px 24px rgba(0,0,0,0.4)}
+  .panel h2{font-family:var(--font-display);font-size:1.3rem;margin-bottom:0.25rem}
+  .panel .subtitle{color:var(--muted);font-size:0.85rem;margin-bottom:1.25rem}
+  .panel section + section{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media (max-width:600px){.grid-2{grid-template-columns:1fr}}
+  label{display:block;font-size:0.72rem;font-family:var(--font-mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem}
+  input[type=text],input[type=email],input[type=password],input[type=number],input[type=url],select,textarea{
+    width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:0.65rem 0.75rem;border-radius:8px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  textarea{min-height:80px;resize:vertical;font-family:inherit}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;padding:0.55rem 1rem;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:0.85rem;transition:all 0.15s}
+  .btn-primary{background:var(--accent-strong);color:#fff}
+  .btn-primary:hover{background:#b970ff;transform:translateY(-1px)}
+  .btn-ghost{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--border)}
+  .btn-ghost:hover{background:rgba(255,255,255,0.12)}
+  .btn-danger{background:rgba(245,109,109,0.15);color:var(--danger);border:1px solid rgba(245,109,109,0.35)}
+  .btn-danger:hover{background:rgba(245,109,109,0.25)}
+  .btn-sm{padding:0.3rem 0.6rem;font-size:0.75rem}
+  .table{width:100%;border-collapse:collapse;font-size:0.85rem}
+  .table th,.table td{text-align:left;padding:0.6rem 0.5rem;border-bottom:1px solid var(--border);vertical-align:middle}
+  .table th{color:var(--muted);font-weight:600;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em}
+  .table tr:hover td{background:rgba(255,255,255,0.02)}
+  .table img.cover{width:48px;height:30px;object-fit:cover;border-radius:4px;background:var(--surface-2)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase}
+  .badge-on{background:rgba(66,245,161,0.12);color:var(--success);border:1px solid rgba(66,245,161,0.3)}
+  .badge-off{background:rgba(245,109,109,0.12);color:var(--danger);border:1px solid rgba(245,109,109,0.3)}
+  .badge-soft{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border)}
+  .row{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
+  .row.right{justify-content:flex-end}
+  .row.between{justify-content:space-between}
+  .stack > * + *{margin-top:0.75rem}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-2);color:var(--text);padding:11px 22px;border-radius:999px;font-size:0.85rem;font-weight:600;border:1px solid var(--border);opacity:0;transition:all 0.22s;z-index:9999;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.error{border-color:rgba(245,109,109,0.5);color:var(--danger)}
+  .toast.ok{border-color:rgba(66,245,161,0.5);color:var(--success)}
+  .modal-bg{position:fixed;inset:0;background:rgba(5,5,10,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem;overflow-y:auto}
+  .modal-bg.open{display:flex}
+  .modal-card{background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:1.5rem;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.7)}
+  .modal-card h3{font-family:var(--font-display);font-size:1.2rem;margin-bottom:1rem}
+  .modal-card .row.right{margin-top:1rem}
+  .modal-card .close-x{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .empty{padding:2rem;text-align:center;color:var(--muted);font-size:0.9rem}
+  .pill-input{display:flex;gap:0.4rem;flex-wrap:wrap;padding:0.4rem;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;min-height:40px}
+  .pill-input .pill{background:rgba(168,85,247,0.2);color:#fff;padding:3px 8px;border-radius:999px;font-size:0.78rem;display:inline-flex;align-items:center;gap:4px;border:1px solid rgba(168,85,247,0.3)}
+  .pill-input .pill button{background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:0.9rem;line-height:1}
+  .pill-input input{flex:1;min-width:80px;background:none;border:none;outline:none;padding:0.2rem;color:#fff}
+  .help{font-size:0.75rem;color:var(--muted);margin-top:0.25rem}
+  .empty-state{padding:3rem 1rem;text-align:center;color:var(--muted)}
+  .empty-state .ico{font-size:2rem;opacity:0.4;margin-bottom:0.5rem}
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-bottom:1.25rem}
+  .stat{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:0.85rem}
+  .stat .n{font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:#fff}
+  .stat .l{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+  code.inline{background:rgba(0,0,0,0.4);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:0.85em;color:var(--accent)}
+  .preview-cover{width:80px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--border);background:var(--surface-2)}
+  .switch{position:relative;display:inline-block;width:42px;height:24px}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,0.1);border-radius:24px;transition:0.2s}
+  .slider::before{position:absolute;content:"";height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:0.2s}
+  .switch input:checked + .slider{background:var(--accent-strong)}
+  .switch input:checked + .slider::before{transform:translateX(18px)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <h1>Admin Console · TGR</h1>
+    <div class="user-area" id="userArea">
+      <span id="userInfo">Loading…</span>
+      <a href="index.html" class="btn btn-ghost btn-sm">View site</a>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a data-section="dashboard" class="active">📊 Dashboard</a>
+    <a data-section="games">🎮 Games</a>
+    <a data-section="reviews">💬 Reviews</a>
+    <a data-section="queue">⏳ Queue Settings</a>
+    <a data-section="streaming">🖥️ Streaming Config</a>
+    <a data-section="trending">🔥 Trending</a>
+    <a data-section="notifications">🔔 Notifications</a>
+    <a data-section="site">🏠 Homepage Content</a>
+    <a data-section="users">👥 Users</a>
+  </nav>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section class="panel" id="sec-dashboard">
+      <h2>Dashboard</h2>
+      <p class="subtitle">Quick overview of the platform.</p>
+      <div class="stats-row" id="statsRow">
+        <div class="stat"><div class="n" id="statGames">–</div><div class="l">Games</div></div>
+        <div class="stat"><div class="n" id="statReviews">–</div><div class="l">Reviews</div></div>
+        <div class="stat"><div class="n" id="statUsers">–</div><div class="l">Users</div></div>
+        <div class="stat"><div class="n" id="statOnline">–</div><div class="l">Total online (fake)</div></div>
+      </div>
+      <p class="help">API base: <code class="inline" id="apiBaseDisplay">…</code></p>
+    </section>
+
+    <!-- GAMES -->
+    <section class="panel" id="sec-games" style="display:none">
+      <div class="row between">
+        <div>
+          <h2>Games</h2>
+          <p class="subtitle">Add, edit, and delete catalog entries.</p>
+        </div>
+        <button class="btn btn-primary" data-add="game">+ New Game</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="gamesTable">
+          <thead><tr><th>Cover</th><th>Title</th><th>Section</th><th>★</th><th>Online</th><th>Cloud</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="panel" id="sec-reviews" style="display:none">
+      <div class="row between">
+        <div>
+          <h2>Reviews</h2>
+          <p class="subtitle">Fake user comments linked to games.</p>
+        </div>
+        <button class="btn btn-primary" data-add="review">+ New Review</button>
+      </div>
+      <table class="table" id="reviewsTable">
+        <thead><tr><th>User</th><th>Game</th><th>Stars</th><th>Text</th><th>When</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- QUEUE -->
+    <section class="panel" id="sec-queue" style="display:none">
+      <h2>Queue Settings</h2>
+      <p class="subtitle">Per-game fake wait time and player count shown in the queue modal.</p>
+      <table class="table" id="queueTable">
+        <thead><tr><th>Game</th><th>Position</th><th>Wait</th><th>Online now</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- STREAMING -->
+    <section class="panel" id="sec-streaming" style="display:none">
+      <h2>Streaming Configuration</h2>
+      <p class="subtitle">Edit GPU options, quality and frame rate dropdowns per game.</p>
+      <div class="row between" style="margin-bottom:1rem">
+        <select id="streamGameSelect" style="max-width:300px"></select>
+        <button class="btn btn-primary" id="saveStreamBtn">Save streaming config</button>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label>GPU Options</label>
+          <div id="gpuList" class="stack"></div>
+          <button class="btn btn-ghost btn-sm" id="addGpuBtn" style="margin-top:0.5rem">+ Add GPU option</button>
+        </div>
+        <div>
+          <label>Quality dropdown (one per line)</label>
+          <textarea id="qualityOptions"></textarea>
+          <label style="margin-top:0.75rem">Frame rate dropdown (one per line)</label>
+          <textarea id="frameRateOptions"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRENDING -->
+    <section class="panel" id="sec-trending" style="display:none">
+      <h2>Trending Section</h2>
+      <p class="subtitle">Pick which games appear in the "Trending This Week" carousel.</p>
+      <div class="row" style="margin-bottom:1rem">
+        <label class="switch"><input type="checkbox" id="trendingEnabled"><span class="slider"></span></label>
+        <input type="text" id="trendingTitle" placeholder="Section title" style="max-width:300px">
+        <button class="btn btn-primary" id="saveTrendingBtn">Save</button>
+      </div>
+      <p class="help">Drag the rows to reorder. The order here = rank (#1, #2, …).</p>
+      <table class="table" id="trendingTable">
+        <thead><tr><th>Rank</th><th>Game</th><th>Order</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="panel" id="sec-notifications" style="display:none">
+      <h2>Fake Popup Notifications</h2>
+      <p class="subtitle">Show "X is now playing Y" toasts on the homepage.</p>
+      <div class="row" style="margin-bottom:1rem">
+        <label class="switch"><input type="checkbox" id="notifEnabled"><span class="slider"></span></label>
+        <label style="margin:0 0 0 0.5rem">Interval (seconds):</label>
+        <input type="number" id="notifInterval" min="3" max="600" style="max-width:120px">
+        <button class="btn btn-primary" id="saveNotifBtn">Save</button>
+      </div>
+      <label>Username pool (one per line)</label>
+      <textarea id="notifPool" style="min-height:200px"></textarea>
+    </section>
+
+    <!-- SITE / HOMEPAGE CONTENT -->
+    <section class="panel" id="sec-site" style="display:none">
+      <h2>Homepage Content</h2>
+      <p class="subtitle">Edit hero text, how-it-works steps, and footer columns.</p>
+      <div class="grid-2">
+        <div>
+          <label>Hero eyebrow</label>
+          <input type="text" id="siteEyebrow">
+          <label style="margin-top:0.75rem">Hero headline (use &lt;br&gt; for line break, wrap the highlighted word in &lt;em&gt;...&lt;/em&gt;)</label>
+          <input type="text" id="siteHeadline">
+          <label style="margin-top:0.75rem">Highlighted word inside &lt;em&gt;</label>
+          <input type="text" id="siteHeadlineEm">
+          <label style="margin-top:0.75rem">Hero subheadline</label>
+          <textarea id="siteSubheadline"></textarea>
+        </div>
+        <div>
+          <label>"How It Works" title</label>
+          <input type="text" id="siteHiwTitle">
+          <label style="margin-top:0.75rem">Steps</label>
+          <div id="hiwSteps" class="stack"></div>
+          <button class="btn btn-ghost btn-sm" id="addHiwBtn" style="margin-top:0.5rem">+ Add step</button>
+        </div>
+      </div>
+      <div class="row" style="margin-top:1.5rem">
+        <button class="btn btn-primary" id="saveSiteBtn">Save homepage</button>
+      </div>
+      <section>
+        <h3 style="font-family:var(--font-display);margin:1rem 0 0.5rem">Footer columns</h3>
+        <div id="footerCols" class="stack"></div>
+        <button class="btn btn-ghost btn-sm" id="addFooterColBtn" style="margin-top:0.5rem">+ Add column</button>
+      </section>
+    </section>
+
+    <!-- USERS -->
+    <section class="panel" id="sec-users" style="display:none">
+      <h2>Users</h2>
+      <p class="subtitle">View, promote, or delete accounts.</p>
+      <table class="table" id="usersTable">
+        <thead><tr><th>Name</th><th>@tag</th><th>Email</th><th>Role</th><th>Joined</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal-card" id="modalCard"></div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

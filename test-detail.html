@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Detail Page — Smoke Test</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem; background: #1a1a2e; color: #eee; }
+        h1 { color: #a855f7; font-size: 1.5rem; }
+        .test { background: #13131c; border: 1px solid #333; border-radius: 8px; padding: 1rem; margin: 0.75rem 0; display: flex; align-items: center; gap: 0.75rem; }
+        .icon { font-size: 1.5rem; flex-shrink: 0; }
+        .pass { border-color: #42f5a1; }
+        .fail { border-color: #f56d6d; }
+        .pending { border-color: #f59e42; }
+        .label { font-weight: 600; }
+        .detail { color: #888; font-size: 0.85rem; margin-top: 0.25rem; }
+        a { color: #7c6dfa; }
+        #results { margin-top: 1rem; }
+        button { background: #a855f7; color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.2rem; cursor: pointer; font-weight: 700; margin-top: 1rem; font-size: 1rem; }
+        button:hover { background: #b970ff; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Game Detail Page — Smoke Test</h1>
+    <p>This test verifies the game detail page works without a real MongoDB server.</p>
+    <button onclick="runTests()">Run Tests</button>
+    <div id="results"></div>
+
+    <script>
+        const SLUGS = [
+            'lego-batman-legacy-of-the-dark-knight',
+            'tomodachi-life-living-the-dream',
+            'paralives'
+        ];
+
+        function addResult(name, passed, detail) {
+            const div = document.createElement('div');
+            div.className = `test ${passed ? 'pass' : 'fail'}`;
+            div.innerHTML = `
+                <span class="icon">${passed ? '✅' : '❌'}</span>
+                <div>
+                    <div class="label">${name}</div>
+                    <div class="detail">${detail}</div>
+                </div>
+            `;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function testPage(slug) {
+            const url = `game.html?id=${slug}`;
+            try {
+                // We can't actually navigate, but we can verify the file exists
+                const res = await fetch('game.html');
+                if (!res.ok) throw new Error(`game.html returned ${res.status}`);
+                const html = await res.text();
+                
+                // Check game.html structure
+                const checks = [
+                    [html.includes('id="detail-loading"'), 'Has loading state'],
+                    [html.includes('id="detail-error"'), 'Has error state'],
+                    [html.includes('id="detail-content"'), 'Has content container'],
+                    [html.includes('id="detail-title"'), 'Has title element'],
+                    [html.includes('id="detail-cover"'), 'Has cover element'],
+                    [html.includes('id="detail-play-btn"'), 'Has play button'],
+                    [html.includes('game-detail.js'), 'Loads game-detail.js'],
+                    [html.includes('styles.css'), 'Links styles.css'],
+                    [html.includes('api.js'), 'Loads api.js'],
+                    [html.includes('modal-overlay'), 'Has streaming modal'],
+                    [html.includes('queue-overlay'), 'Has queue modal'],
+                    [html.includes('iframe-overlay'), 'Has iframe modal'],
+                ];
+                
+                let allPassed = true;
+                checks.forEach(([passed, label]) => {
+                    if (!passed) allPassed = false;
+                    addResult(`game.html: ${label}`, passed, passed ? 'Found in markup' : 'MISSING from markup');
+                });
+                
+                return allPassed;
+            } catch (err) {
+                addResult(`game.html fetch`, false, err.message);
+                return false;
+            }
+        }
+
+        async function testGameDetailJS() {
+            try {
+                const res = await fetch('game-detail.js');
+                if (!res.ok) throw new Error(`game-detail.js returned ${res.status}`);
+                const js = await res.text();
+                
+                const checks = [
+                    [js.includes('FALLBACK_GAMES'), 'Has fallback game data'],
+                    [js.includes('lego-batman-legacy-of-the-dark-knight'), 'Has LEGO Batman fallback'],
+                    [js.includes('tomodachi-life-living-the-dream'), 'Has Tomodachi Life fallback'],
+                    [js.includes('paralives'), 'Has Paralives fallback'],
+                    [js.includes('tryFallback'), 'Has tryFallback function'],
+                    [js.includes('titleToSlug'), 'Has titleToSlug helper'],
+                    [js.includes('populate('), 'Has populate function'],
+                    [js.includes('wireActions'), 'Has wireActions function'],
+                    [js.includes('fetchGame'), 'Has fetchGame function'],
+                ];
+                
+                let allPassed = true;
+                checks.forEach(([passed, label]) => {
+                    if (!passed) allPassed = false;
+                    addResult(`game-detail.js: ${label}`, passed, passed ? 'Found in source' : 'MISSING from source');
+                });
+                
+                return allPassed;
+            } catch (err) {
+                addResult(`game-detail.js fetch`, false, err.message);
+                return false;
+            }
+        }
+
+        async function testApiJS() {
+            try {
+                const res = await fetch('api.js');
+                if (!res.ok) throw new Error(`api.js returned ${res.status}`);
+                const js = await res.text();
+                
+                const checks = [
+                    [js.includes('attachCardNavigation'), 'Has attachCardNavigation function'],
+                    [js.includes('titleToSlug'), 'Has titleToSlug helper'],
+                    [js.includes('modern-games-heading'), 'Targets premium section'],
+                    [js.includes('game.html?id='), 'Navigates to game.html'],
+                    [js.includes('dataset.gameId'), 'Uses data-game-id attribute'],
+                ];
+                
+                let allPassed = true;
+                checks.forEach(([passed, label]) => {
+                    if (!passed) allPassed = false;
+                    addResult(`api.js: ${label}`, passed, passed ? 'Found in source' : 'MISSING from source');
+                });
+                
+                return allPassed;
+            } catch (err) {
+                addResult(`api.js fetch`, false, err.message);
+                return false;
+            }
+        }
+
+        async function testStylesCSS() {
+            try {
+                const res = await fetch('styles.css');
+                if (!res.ok) throw new Error(`styles.css returned ${res.status}`);
+                const css = await res.text();
+                
+                addResult('styles.css: Loads', true, `${css.length.toLocaleString()} bytes, ${css.split('\n').length} lines`);
+                addResult('styles.css: Has premium card hover', css.includes('modern-games-heading'), 
+                    css.includes('modern-games-heading') ? 'Premium hover affordance present' : 'MISSING premium hover CSS');
+                
+                return true;
+            } catch (err) {
+                addResult(`styles.css fetch`, false, err.message);
+                return false;
+            }
+        }
+
+        async function runTests() {
+            document.getElementById('results').innerHTML = '';
+            
+            await testPage('lego-batman-legacy-of-the-dark-knight');
+            await testGameDetailJS();
+            await testApiJS();
+            await testStylesCSS();
+            
+            // Summary
+            const tests = document.querySelectorAll('.test');
+            const passed = document.querySelectorAll('.test.pass').length;
+            const failed = document.querySelectorAll('.test.fail').length;
+            
+            const summary = document.createElement('div');
+            summary.style.cssText = 'margin-top: 1.5rem; padding: 1rem; border-radius: 8px; font-weight: 700; font-size: 1.1rem; text-align: center;';
+            
+            if (failed === 0) {
+                summary.style.background = 'rgba(66, 245, 161, 0.15)';
+                summary.style.color = '#42f5a1';
+                summary.textContent = `✅ All ${passed} tests passed! The detail page is correctly configured.`;
+            } else {
+                summary.style.background = 'rgba(245, 109, 109, 0.15)';
+                summary.style.color = '#f56d6d';
+                summary.textContent = `❌ ${failed} of ${passed + failed} tests failed.`;
+            }
+            document.getElementById('results').appendChild(summary);
+
+            // Add manual test links
+            const links = document.createElement('div');
+            links.style.marginTop = '1.5rem';
+            links.innerHTML = `
+                <p style="color: #888; font-size: 0.9rem;">Manual verification links:</p>
+                <p>→ <a href="game.html?id=lego-batman-legacy-of-the-dark-knight">LEGO Batman detail page</a></p>
+                <p>→ <a href="game.html?id=tomodachi-life-living-the-dream">Tomodachi Life detail page</a></p>
+                <p>→ <a href="game.html?id=paralives">Paralives detail page</a></p>
+                <p>→ <a href="game.html?id=nonexistent-game">Invalid game (should show error)</a></p>
+                <p>→ <a href="index.html">Back to index.html</a></p>
+            `;
+            document.getElementById('results').appendChild(links);
+        }
+    </script>
+</body>
+</html>

@@ -1,1968 +1,1647 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="referrer" content="no-referrer" />
-    <title>The Game Repository — Digital Archive & Software Preservation</title>
-
-    <style>
-        /* ============================================================
-       DESIGN SYSTEM — CSS Custom Properties
-    ============================================================ */
-        :root {
-            /* Colors */
-            --color-bg: #0a0a0f;
-            --color-surface: #13131c;
-            --color-surface-2: #1c1c2b;
-            --color-border: rgba(255, 255, 255, 0.07);
-            --color-text: #e8e8f0;
-            --color-muted: #6b6b88;
-            --color-accent: #7c6dfa;
-            --color-accent-glow: rgba(124, 109, 250, 0.25);
-            --color-accent-2: #fa6d9a;
-            --color-badge-retro: #f59e42;
-            --color-badge-mobile: #42d4f5;
-            --color-badge-niche: #7c6dfa;
-            --color-badge-ios: #007aff;
-            --color-badge-emu: #a855f7;
-            --color-danger: #f56d6d;
-            --color-success: #42f5a1;
-
-            /* Typography */
-            --font-display: 'Georgia', 'Times New Roman', serif;
-            --font-body: 'Trebuchet MS', 'Lucida Sans', sans-serif;
-            --font-mono: 'Courier New', monospace;
-
-            /* Spacing scale */
-            --space-1: 0.25rem;
-            --space-2: 0.5rem;
-            --space-3: 0.75rem;
-            --space-4: 1rem;
-            --space-5: 1.5rem;
-            --space-6: 2rem;
-            --space-8: 3rem;
-            --space-10: 5rem;
-
-            /* Radii */
-            --radius-sm: 6px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --radius-xl: 32px;
-            --radius-full: 9999px;
-
-            /* Shadows */
-            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
-            --shadow-accent: 0 0 32px var(--color-accent-glow);
-            --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.7);
-
-            /* Transitions */
-            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-            --dur-fast: 150ms;
-            --dur-med: 280ms;
-            --dur-slow: 480ms;
-
-            /* Layout */
-            --max-width: 1200px;
-            --nav-height: 64px;
-        }
-
-        /* ============================================================
-       RESET & BASE
-    ============================================================ */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        body {
-            background-color: var(--color-bg);
-            color: var(--color-text);
-            font-family: var(--font-body);
-            font-size: 1rem;
-            line-height: 1.6;
-            min-height: 100dvh;
-            overflow-x: hidden;
-            /* Safe area for notched phones */
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        img {
-            display: block;
-            max-width: 100%;
-        }
-
-        /* ============================================================
-       BACKGROUND ATMOSPHERE
-    ============================================================ */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 80% 60% at 20% -10%, rgba(124, 109, 250, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 80% 110%, rgba(250, 109, 154, 0.09) 0%, transparent 55%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* ============================================================
-       HEADER / NAV
-    ============================================================ */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            height: var(--nav-height);
-            background: rgba(10, 10, 15, 0.82);
-            backdrop-filter: blur(18px) saturate(160%);
-            -webkit-backdrop-filter: blur(18px) saturate(160%);
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        nav {
-            max-width: var(--max-width);
-            margin: 0 auto;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 var(--space-5);
-        }
-
-        .nav-logo-container {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            text-decoration: none;
-        }
-
-        .logo-svg {
-            width: 28px;
-            height: 28px;
-            flex-shrink: 0;
-            transition: transform var(--dur-fast) var(--ease-out);
-        }
-
-        .nav-logo-container:hover .logo-svg {
-            transform: scale(1.08) rotate(-3deg);
-        }
-
-        .nav-logo {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #fff 30%, var(--color-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-logo-sub {
-            font-size: 0.8rem;
-            font-family: var(--font-mono);
-            color: var(--color-muted);
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            margin-left: 8px;
-            -webkit-text-fill-color: var(--color-muted);
-            display: none;
-        }
-
-        @media (min-width: 500px) {
-            .nav-logo-sub {
-                display: inline-block;
-            }
-        }
-
-        .nav-links {
-            display: flex;
-            gap: var(--space-5);
-            list-style: none;
-        }
-
-        .nav-links a {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--color-muted);
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            transition: color var(--dur-fast) var(--ease-out);
-        }
-
-        .nav-links a:hover {
-            color: var(--color-text);
-        }
-
-        /* ============================================================
-       HERO
-    ============================================================ */
-        .hero {
-            position: relative;
-            z-index: 1;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: var(--space-10) var(--space-5) var(--space-8);
-            text-align: center;
-        }
-
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-2);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--color-accent);
-            border: 1px solid rgba(124, 109, 250, 0.3);
-            border-radius: var(--radius-full);
-            padding: var(--space-1) var(--space-4);
-            margin-bottom: var(--space-5);
-        }
-
-        .hero-eyebrow::before {
-            content: '';
-            display: block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--color-accent);
-            box-shadow: 0 0 8px var(--color-accent);
-        }
-
-        .hero h1 {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 6vw, 3.75rem);
-            font-weight: 700;
-            line-height: 1.12;
-            letter-spacing: -0.03em;
-            margin-bottom: var(--space-5);
-            color: #fff;
-        }
-
-        .hero h1 em {
-            font-style: normal;
-            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-sub {
-            max-width: 560px;
-            margin: 0 auto var(--space-6);
-            font-size: 1.05rem;
-            color: var(--color-muted);
-            line-height: 1.7;
-        }
-
-        /* ============================================================
-       MAIN CONTENT
-    ============================================================ */
-        main {
-            position: relative;
-            z-index: 1;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 var(--space-5) var(--space-10);
-        }
-
-        /* ============================================================
-       SECTION HEADERS
-    ============================================================ */
-        .showcase-section {
-            margin-bottom: var(--space-10);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-4);
-            margin-bottom: var(--space-6);
-        }
-
-        .section-header h2 {
-            font-family: var(--font-display);
-            font-size: clamp(1.25rem, 3vw, 1.75rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #fff;
-        }
-
-        .section-line {
-            flex: 1;
-            height: 1px;
-            background: var(--color-border);
-        }
-
-        .section-count {
-            font-size: 0.75rem;
-            color: var(--color-muted);
-            font-family: var(--font-mono);
-        }
-
-        /* ============================================================
-       GAME GRID — Mobile-first
-    ============================================================ */
-        .game-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--space-5);
-        }
-
-        @media (min-width: 600px) {
-            .game-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 900px) {
-            .game-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        /* ============================================================
-       GAME CARD
-    ============================================================ */
-        article.game-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-card);
-            transition: transform var(--dur-med) var(--ease-out),
-                box-shadow var(--dur-med) var(--ease-out),
-                border-color var(--dur-med) var(--ease-out);
-            display: flex;
-            flex-direction: column;
-        }
-
-        article.game-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-card), var(--shadow-accent);
-            border-color: rgba(124, 109, 250, 0.25);
-        }
-
-        /* Cover placeholder */
-        .card-cover {
-            width: 100%;
-            aspect-ratio: 16 / 10;
-            background: linear-gradient(135deg, var(--color-surface-2) 0%, var(--color-bg) 100%);
-            border-bottom: 1px solid var(--color-border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-2);
-            position: relative;
-            overflow: hidden;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        /* Dark overlay to make labels legible over box art */
-        .card-cover::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(10, 10, 15, 0.5);
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Subtle dashed inner border */
-        .card-cover::after {
-            content: '';
-            position: absolute;
-            inset: 12px;
-            border: 1px dashed rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-md);
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        .card-cover-icon {
-            font-size: 1.75rem;
-            opacity: 0.25;
-            position: relative;
-            z-index: 2;
-        }
-
-        .card-cover-label {
-            display: none; /* Hidden visually, but keeps structure */
-            font-size: 0.7rem;
-            font-family: var(--font-mono);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--color-text);
-            opacity: 0.9;
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        /* Card body */
-        .card-body {
-            padding: var(--space-4) var(--space-5) var(--space-5);
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-            flex: 1;
-        }
-
-        .card-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Platform badge */
-        .badge {
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 3px 10px;
-            border-radius: var(--radius-full);
-        }
-
-        .badge-retro {
-            background: rgba(245, 158, 66, 0.15);
-            color: var(--color-badge-retro);
-            border: 1px solid rgba(245, 158, 66, 0.25);
-        }
-
-        .badge-mobile {
-            background: rgba(66, 212, 245, 0.12);
-            color: var(--color-badge-mobile);
-            border: 1px solid rgba(66, 212, 245, 0.22);
-        }
-
-        .badge-niche {
-            background: rgba(124, 109, 250, 0.15);
-            color: var(--color-badge-niche);
-            border: 1px solid rgba(124, 109, 250, 0.3);
-        }
-
-        .badge-ios {
-            background: rgba(0, 122, 255, 0.12);
-            color: var(--color-badge-ios);
-            border: 1px solid rgba(0, 122, 255, 0.25);
-        }
-
-        .badge-emu {
-            background: rgba(168, 85, 247, 0.12);
-            color: var(--color-badge-emu);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-        }
-
-        .card-title {
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.01em;
-        }
-
-        .card-description {
-            font-size: 0.8rem;
-            color: var(--color-muted);
-            line-height: 1.5;
-            margin-top: calc(-1 * var(--space-1));
-            margin-bottom: var(--space-2);
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Download button */
-        .btn-download {
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-2);
-            width: 100%;
-            padding: var(--space-3) var(--space-4);
-            background: rgba(124, 109, 250, 0.12);
-            color: var(--color-accent);
-            border: 1px solid rgba(124, 109, 250, 0.3);
-            border-radius: var(--radius-md);
-            font-family: var(--font-body);
-            font-size: 0.875rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            cursor: pointer;
-            transition: background var(--dur-fast) var(--ease-out),
-                border-color var(--dur-fast) var(--ease-out),
-                color var(--dur-fast) var(--ease-out),
-                transform var(--dur-fast) var(--ease-out);
-        }
-
-        .btn-download:hover {
-            background: rgba(124, 109, 250, 0.22);
-            border-color: var(--color-accent);
-            color: #fff;
-            transform: scale(1.01);
-        }
-
-        .btn-download:active {
-            transform: scale(0.98);
-        }
-
-        /* ============================================================
-       FOOTER
-    ============================================================ */
-        footer {
-            position: relative;
-            z-index: 1;
-            border-top: 1px solid var(--color-border);
-            padding: var(--space-8) var(--space-5);
-            padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom));
-            text-align: center;
-        }
-
-        footer p {
-            font-size: 0.8rem;
-            color: var(--color-muted);
-        }
-
-        footer strong {
-            color: var(--color-text);
-        }
-
-        /* ============================================================
-       MODAL OVERLAY
-    ============================================================ */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 500;
-            background: rgba(5, 5, 10, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-5);
-            padding-top: calc(var(--space-5) + env(safe-area-inset-top));
-            padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
-
-            /* Animation */
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity var(--dur-med) var(--ease-out),
-                visibility var(--dur-med) var(--ease-out);
-        }
-
-        .modal-overlay.is-open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* ============================================================
-       MODAL PANEL
-    ============================================================ */
-        .modal {
-            position: relative;
-            width: 100%;
-            max-width: min(480px, 90vw);
-            max-height: 90dvh;
-            overflow-y: auto;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-modal);
-            padding: var(--space-6);
-
-            /* Animation */
-            transform: translateY(24px) scale(0.97);
-            transition: transform var(--dur-med) var(--ease-out);
-        }
-
-        .modal-overlay.is-open .modal {
-            transform: translateY(0) scale(1);
-        }
-
-        /* Modal close button */
-        .modal-close {
-            position: absolute;
-            top: var(--space-4);
-            right: var(--space-4);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 1px solid var(--color-border);
-            background: var(--color-surface-2);
-            color: var(--color-muted);
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background var(--dur-fast), color var(--dur-fast);
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--color-text);
-        }
-
-        /* Modal icon */
-        .modal-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: var(--space-5);
-        }
-
-        /* Modal headings & text */
-        .modal h2 {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #fff;
-            margin-bottom: var(--space-3);
-        }
-
-        .modal-body-text {
-            font-size: 0.9rem;
-            color: var(--color-muted);
-            line-height: 1.65;
-            margin-bottom: var(--space-5);
-        }
-
-        /* Info notice */
-        .modal-notice {
-            background: var(--color-surface-2);
-            border: 1px solid var(--color-border);
-            border-left: 3px solid var(--color-accent);
-            border-radius: var(--radius-sm);
-            padding: var(--space-3) var(--space-4);
-            font-size: 0.82rem;
-            color: var(--color-muted);
-            margin-bottom: var(--space-5);
-            line-height: 1.5;
-        }
-
-        .modal-notice strong {
-            color: var(--color-text);
-        }
-
-        /* Steps */
-        .modal-steps {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-            margin-bottom: var(--space-6);
-        }
-
-        .modal-steps li {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-3);
-        }
-
-        .step-num {
-            flex-shrink: 0;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: rgba(124, 109, 250, 0.18);
-            border: 1px solid rgba(124, 109, 250, 0.35);
-            color: var(--color-accent);
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .step-text {
-            font-size: 0.875rem;
-            color: var(--color-text);
-            padding-top: 3px;
-            line-height: 1.5;
-        }
-
-        /* Divider */
-        .modal-divider {
-            height: 1px;
-            background: var(--color-border);
-            margin-bottom: var(--space-5);
-        }
-
-        /* Modal action buttons */
-        .modal-actions {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: var(--space-4);
-            background: linear-gradient(135deg, var(--color-accent), #9b6dfa);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius-md);
-            font-family: var(--font-body);
-            font-size: 0.95rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            cursor: pointer;
-            box-shadow: 0 4px 16px var(--color-accent-glow);
-            transition: opacity var(--dur-fast), transform var(--dur-fast);
-        }
-
-        .btn-primary:hover {
-            opacity: 0.88;
-            transform: scale(1.01);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .btn-proceed {
-            width: 100%;
-            padding: var(--space-4);
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--color-muted);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            font-family: var(--font-body);
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: not-allowed;
-            pointer-events: none;
-            transition: all var(--dur-med) var(--ease-out);
-            position: relative;
-        }
-
-        /* Proceed — active state */
-        .btn-proceed.is-active {
-            background: rgba(66, 245, 161, 0.1);
-            color: var(--color-success);
-            border-color: rgba(66, 245, 161, 0.3);
-            cursor: pointer;
-            pointer-events: auto;
-        }
-
-        .btn-proceed.is-active:hover {
-            background: rgba(66, 245, 161, 0.18);
-            border-color: var(--color-success);
-        }
-
-        /* ============================================================
-           IFRAME MODAL
-        ============================================================ */
-        .modal-iframe {
-            max-width: 95vw;
-            height: 90dvh;
-            padding: 0;
-            overflow: hidden;
-            background: #fff;
-        }
-
-        .modal-iframe iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-
-        .modal-iframe .modal-close {
-            background: rgba(10, 10, 15, 0.6);
-            color: #fff;
-            border: none;
-            backdrop-filter: blur(4px);
-            z-index: 10;
-        }
-
-        .modal-iframe .modal-close:hover {
-            background: rgba(10, 10, 15, 0.9);
-        }
-
-        .iframe-status-text {
-            position: absolute;
-            top: 20px;
-            right: 64px;
-            background: rgba(10, 10, 15, 0.75);
-            color: #fff;
-            padding: 6px 12px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            border-radius: var(--radius-sm);
-            z-index: 10;
-            backdrop-filter: blur(4px);
-            transition: opacity var(--dur-med) var(--ease-out);
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: var(--font-body);
-        }
-
-        /* ============================================================
-       SCROLL LOCK (applied to <body>)
-    ============================================================ */
-        body.modal-open {
-            overflow: hidden;
-        }
-
-        /* ============================================================
-       UTILITY
-    ============================================================ */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-        }
-
-        /* ============================================================
-       ANIMATION — stagger card fade-in on load
-    ============================================================ */
-        @keyframes cardIn {
-            from {
-                opacity: 0;
-                transform: translateY(16px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        article.game-card {
-            animation: cardIn var(--dur-slow) var(--ease-out) both;
-        }
-
-        /* Stagger by index using sibling count */
-        article.game-card:nth-child(1) {
-            animation-delay: 0ms;
-        }
-
-        article.game-card:nth-child(2) {
-            animation-delay: 60ms;
-        }
-
-        article.game-card:nth-child(3) {
-            animation-delay: 120ms;
-        }
-
-        /* ============================================================
-           DARK/LIGHT MODE
-        ============================================================ */
-        body.light-theme {
-            --color-bg: #f4f4f8;
-            --color-surface: #ffffff;
-            --color-surface-2: #e8e8f0;
-            --color-border: rgba(0, 0, 0, 0.1);
-            --color-text: #1a1a24;
-            --color-muted: #5a5a70;
-            --color-accent: #6b5aed;
-            --color-accent-glow: rgba(107, 90, 237, 0.2);
-        }
-
-        body.light-theme .hero h1,
-        body.light-theme .section-header h2,
-        body.light-theme .card-title,
-        body.light-theme .modal h2 {
-            color: #1a1a24;
-        }
-
-        body.light-theme .btn-download,
-        body.light-theme .btn-direct {
-            background: rgba(107, 90, 237, 0.12);
-            color: var(--color-accent);
-            border-color: rgba(107, 90, 237, 0.3);
-        }
-
-        body.light-theme .card-cover::before {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-theme-toggle {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--color-muted);
-            transition: transform var(--dur-fast), color var(--dur-fast);
-            padding: 0 var(--space-2);
-        }
-
-        .btn-theme-toggle:hover {
-            color: var(--color-text);
-            transform: scale(1.15);
-        }
-
-        /* ============================================================
-           NEW BADGE & DIRECT LINK
-        ============================================================ */
-        .badge-new {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: linear-gradient(135deg, #f56d6d, #fa6d9a);
-            color: #fff;
-            padding: 4px 10px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            border-radius: var(--radius-full);
-            z-index: 10;
-            box-shadow: 0 4px 12px rgba(245, 109, 109, 0.4);
-            animation: pulse-new 2s infinite;
-        }
-
-        @keyframes pulse-new {
-            0% { transform: scale(1); box-shadow: 0 4px 12px rgba(245, 109, 109, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 4px 16px rgba(245, 109, 109, 0.6); }
-            100% { transform: scale(1); box-shadow: 0 4px 12px rgba(245, 109, 109, 0.4); }
-        }
-
-        .btn-direct {
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-2);
-            width: 100%;
-            padding: var(--space-3) var(--space-4);
-            background: rgba(124, 109, 250, 0.12);
-            color: var(--color-accent);
-            border: 1px solid rgba(124, 109, 250, 0.3);
-            border-radius: var(--radius-md);
-            font-family: var(--font-body);
-            font-size: 0.875rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            cursor: pointer;
-            transition: all var(--dur-fast) var(--ease-out);
-            text-decoration: none;
-        }
-
-        .btn-direct:hover {
-            background: rgba(124, 109, 250, 0.22);
-            border-color: var(--color-accent);
-            color: #fff;
-            transform: scale(1.01);
-        }
-
-        body.light-theme .btn-direct:hover {
-            background: var(--color-accent);
-            color: #fff;
-        }
-
-        /* ============================================================
-           FLOATING BACKGROUND PARTICLES
-        ============================================================ */
-        #bg-particles {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .bg-glyph {
-            position: absolute;
-            bottom: -60px;
-            color: var(--color-accent);
-            opacity: 0;
-            font-size: 1.4rem;
-            line-height: 1;
-            animation: floatUp linear forwards;
-            filter: blur(0.4px);
-            will-change: transform, opacity;
-        }
-
-        body.light-theme .bg-glyph {
-            color: var(--color-accent);
-            filter: blur(0.3px);
-        }
-
-        @keyframes floatUp {
-            0% {
-                opacity: 0;
-                transform: translateY(0) rotate(0deg) scale(1);
-            }
-            8% {
-                opacity: var(--glyph-peak-opacity, 0.12);
-            }
-            80% {
-                opacity: var(--glyph-peak-opacity, 0.12);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(calc(-100vh - 80px)) rotate(var(--glyph-rotation, 120deg)) scale(var(--glyph-end-scale, 0.6));
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Game Archive" />
+  <title>The Game Repository — Digital Archive & Software Preservation</title>
+  <script src="api.js" defer></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-
-    <!-- Animated Background Particles -->
-    <div id="bg-particles" aria-hidden="true"></div>
-
-    <!-- ============================================================
-       HEADER
-  ============================================================ -->
-    <header>
-        <nav aria-label="Main navigation">
-            <a href="#" class="nav-logo-container" aria-label="The Game Repository Home">
-                <svg class="logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true">
-                    <defs>
-                        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ffffff" />
-                            <stop offset="100%" stop-color="#7c6dfa" />
-                        </linearGradient>
-                    </defs>
-                    <!-- Classical Archival Pediment -->
-                    <path d="M4 10 L16 3 L28 10 Z" fill="url(#logo-grad)" opacity="0.95" />
-                    <rect x="4" y="10" width="24" height="2" fill="url(#logo-grad)" />
-                    <!-- Modern Pixel/Preservation Columns -->
-                    <rect x="6" y="14" width="3" height="12" rx="1" fill="url(#logo-grad)" opacity="0.8" />
-                    <rect x="23" y="14" width="3" height="12" rx="1" fill="url(#logo-grad)" opacity="0.8" />
-                    <!-- Interactive Media Center Column (Minimal D-Pad / Controller shape) -->
-                    <path d="M16 13 V23 M11 18 H21" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <!-- Foundation Plinth -->
-                    <rect x="3" y="27" width="26" height="2" rx="0.5" fill="url(#logo-grad)" />
-                </svg>
-                <span class="nav-logo">TGR <span class="nav-logo-sub">// The Game Repository</span></span>
-            </a>
-            <ul class="nav-links" role="list">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Browse</a></li>
-                <li><a href="#">About</a></li>
-                <li>
-                    <button id="theme-toggle" class="btn-theme-toggle" aria-label="Toggle light mode">
-                        ☀️
-                    </button>
-                </li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- ============================================================
-       HERO
-  ============================================================ -->
-    <section class="hero" aria-labelledby="hero-heading">
-        <div class="hero-eyebrow" aria-hidden="true">Open Access &middot; Preserved Archive</div>
-        <h1 id="hero-heading">
-            Preserving the <em>Heritage</em><br>of Interactive Media.
-        </h1>
-        <p class="hero-sub">
-            A peer-reviewed, digital repository of historical software, legacy mobile applications,
-            and pioneering indie developments. Preserved for academic study, historical research, and cultural
-            retention.
-        </p>
-    </section>
-
-    <!-- ============================================================
-       MAIN SHOWCASE
-  ============================================================ -->
-    <main>
-
-        <!-- SECTION 5: Modern Mobile Games (Moved to Top) -->
-        <section class="showcase-section" aria-labelledby="modern-games-heading">
-            <div class="section-header">
-                <h2 id="modern-games-heading">PC & Switch Games on Mobile (Via Emulation)</h2>
-                <div class="section-line" aria-hidden="true"></div>
-                <span class="section-count" aria-label="2 games">02</span>
-            </div>
-
-            <div class="game-grid">
-
-                <article class="game-card" aria-label="Catalog Entry: LEGO Batman: Legacy of The Dark Knight">
-                    <div class="card-cover" style="background-image: url('images/Lego Batman Legacy of The Dark Knight.avif');" aria-hidden="true">
-                        <span class="badge-new">NEW</span>
-                        <span class="card-cover-icon">🦇</span>
-                        <span class="card-cover-label">Catalog #MM-2026-LBL</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-emu">Modern Game</span>
-                        </div>
-                        <p class="card-title">LEGO Batman: Legacy of The Dark Knight</p>
-                        <p class="card-description">
-                            An ambitious mobile action-adventure compiled for high-performance handheld devices. Features advanced dynamic physics, real-time three-dimensional rendering, and custom touch controls optimizing the iconic Dark Knight gameplay.
-                        </p>
-                        <button class="btn-download" data-link="https://steamrip.com/lego-batman-legacy-of-the-dark-knight-free-download/" aria-label="Access Archive — LEGO Batman: Legacy of The Dark Knight">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Tomodachi Life: Living the Dream (2013)">
-                    <div class="card-cover" style="background-image: url('images/tomodachi life living the dream.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🏝️</span>
-                        <span class="card-cover-label">Catalog #MM-2013-TML</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-emu">Modern Game</span>
-                        </div>
-                        <p class="card-title">Tomodachi Life: Living the Dream</p>
-                        <p class="card-description">
-                            An incredibly unique and whimsical life simulation that allows players to populate their personal island with custom Miis, observing hilarious interactions, relationships, and daily drama in a lively digital ecosystem.
-                        </p>
-                        <button class="btn-download" data-link="https://gofile.io/d/8TtjPR" aria-label="Access Archive — Tomodachi Life: Living the Dream">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-            </div>
-        </section>
-
-        <!-- SECTION 1: Legacy Console Systems -->
-        <section class="showcase-section" aria-labelledby="retro-heading">
-            <div class="section-header">
-                <h2 id="retro-heading">Legacy Console Systems</h2>
-                <div class="section-line" aria-hidden="true"></div>
-                <span class="section-count" aria-label="4 games">04</span>
-            </div>
-
-            <div class="game-grid">
-
-                <article class="game-card" aria-label="Catalog Entry: Super Mario World (1990)">
-                    <div class="card-cover" style="background-image: url('images/mario_world.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🍄</span>
-                        <span class="card-cover-label">Catalog #LC-1990-SMW</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-retro">Legacy Console</span>
-                        </div>
-                        <p class="card-title">Super Mario World (1990)</p>
-                        <p class="card-description">
-                            An iconic milestone in two-dimensional level design and fluid character physics, setting the
-                            golden standard for side-scrolling games.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Super Mario World">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: The Legend of Zelda: Ocarina of Time (1998)">
-                    <div class="card-cover" style="background-image: url('images/ocarina.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🗡️</span>
-                        <span class="card-cover-label">Catalog #LC-1998-LZO</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-retro">Legacy Console</span>
-                        </div>
-                        <p class="card-title">The Legend of Zelda: Ocarina of Time (1998)</p>
-                        <p class="card-description">
-                            A pioneering framework for three-dimensional camera mechanics, lock-on target systems, and
-                            expansive spatial progression.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Ocarina of Time">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Tetris (1989)">
-                    <div class="card-cover" style="background-image: url('images/tetris.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🧩</span>
-                        <span class="card-cover-label">Catalog #LC-1989-TET</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-retro">Legacy Console</span>
-                        </div>
-                        <p class="card-title">Tetris (1989)</p>
-                        <p class="card-description">
-                            An unparalleled masterclass in computational minimalism, spatial reasoning, and the
-                            psychology of continuous feedback loops.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Tetris">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: The Legend of Zelda: Twilight Princess (2006)">
-                    <div class="card-cover" style="background-image: url('images/The_Legend_of_Zelda_Twilight_Princess_Game_Cover.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🐺</span>
-                        <span class="card-cover-label">Catalog #LC-2006-LZT</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-retro">Legacy Console</span>
-                        </div>
-                        <p class="card-title">The Legend of Zelda: Twilight Princess</p>
-                        <p class="card-description">
-                            A darker, highly acclaimed entry in the iconic Zelda franchise featuring an expansive world, twilight realm mechanics, stunning orchestral tracks, and Link's transformation into a divine wolf.
-                        </p>
-                        <button class="btn-download" data-link="https://vimm.net/vault/7479" aria-label="Access Archive — The Legend of Zelda: Twilight Princess">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-            </div>
-        </section>
-
-        <!-- SECTION 2: Mobile Software History -->
-        <section class="showcase-section" aria-labelledby="mobile-heading">
-            <div class="section-header">
-                <h2 id="mobile-heading">Mobile Software History</h2>
-                <div class="section-line" aria-hidden="true"></div>
-                <span class="section-count" aria-label="3 games">03</span>
-            </div>
-
-            <div class="game-grid">
-
-                <article class="game-card" aria-label="Catalog Entry: Snake II (2000)">
-                    <div class="card-cover" style="background-image: url('images/snake.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🐍</span>
-                        <span class="card-cover-label">Catalog #MS-2000-SNK</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-mobile">Mobile Software</span>
-                        </div>
-                        <p class="card-title">Snake II (2000)</p>
-                        <p class="card-description">
-                            A landmark in ubiquitous mobile application architecture, demonstrating the possibilities of
-                            early handheld gaming entertainment.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Snake II">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Space Impact (2000)">
-                    <div class="card-cover" style="background-image: url('images/space_impact.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🚀</span>
-                        <span class="card-cover-label">Catalog #MS-2000-SPI</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-mobile">Mobile Software</span>
-                        </div>
-                        <p class="card-title">Space Impact (2000)</p>
-                        <p class="card-description">
-                            An early showcase of monochromatic side-scrolling pixel physics, rendering dynamic enemy
-                            waves on low-resource LCD displays.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Space Impact">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Bounce (2001)">
-                    <div class="card-cover" style="background-image: url('images/bounce.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🔴</span>
-                        <span class="card-cover-label">Catalog #MS-2001-BNC</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-mobile">Mobile Software</span>
-                        </div>
-                        <p class="card-title">Bounce (2001)</p>
-                        <p class="card-description">
-                            A highly influential early mobile platformer exploring gravity dynamics, environmental
-                            obstacles, and momentum control.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Bounce">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-            </div>
-        </section>
-
-        <!-- SECTION 3: Contemporary Independent Development -->
-        <section class="showcase-section" aria-labelledby="niche-heading">
-            <div class="section-header">
-                <h2 id="niche-heading">Contemporary Independent Development</h2>
-                <div class="section-line" aria-hidden="true"></div>
-                <span class="section-count" aria-label="3 games">03</span>
-            </div>
-
-            <div class="game-grid">
-
-                <article class="game-card" aria-label="Catalog Entry: Cave Story (2004)">
-                    <div class="card-cover" style="background-image: url('images/cave_story.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">✨</span>
-                        <span class="card-cover-label">Catalog #ID-2004-CVS</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-niche">Independent Study</span>
-                        </div>
-                        <p class="card-title">Cave Story (2004)</p>
-                        <p class="card-description">
-                            A foundational solo-developed software artifact that catalyzed the modern indie gaming
-                            renaissance through retro aesthetics and tight mechanics.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Cave Story">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Spelunky Classic (2008)">
-                    <div class="card-cover" style="background-image: url('images/spelunky.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🌱</span>
-                        <span class="card-cover-label">Catalog #ID-2008-SPL</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-niche">Independent Study</span>
-                        </div>
-                        <p class="card-title">Spelunky Classic (2008)</p>
-                        <p class="card-description">
-                            An archival study in algorithmic level generation, combining systemic hazard interactions
-                            with roguelike permadeath mechanics.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Spelunky Classic">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Dwarf Fortress Alpha (2006)">
-                    <div class="card-cover" style="background-image: url('images/dwarf_fortress.jpg');" aria-hidden="true">
-                        <span class="card-cover-icon">🔮</span>
-                        <span class="card-cover-label">Catalog #ID-2006-DFF</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-niche">Independent Study</span>
-                        </div>
-                        <p class="card-title">Dwarf Fortress Alpha (2006)</p>
-                        <p class="card-description">
-                            An incredibly detailed procedural world simulator, showcasing deep computational systems,
-                            emergent narratives, and ASCII art displays.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Dwarf Fortress">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-            </div>
-        </section>
-
-        <!-- SECTION 4: iOS Legacy IPAs -->
-        <section class="showcase-section" aria-labelledby="ios-heading">
-            <div class="section-header">
-                <h2 id="ios-heading">iOS Legacy IPAs (32-bit Preservation)</h2>
-                <div class="section-line" aria-hidden="true"></div>
-                <span class="section-count" aria-label="10 games">10</span>
-            </div>
-
-            <div class="game-grid">
-
-                <article class="game-card" aria-label="Catalog Entry: Infinity Blade (2010)">
-                    <div class="card-cover" style="background-image: url('images/infinity_blade.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2010-IFB</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Infinity Blade (2010)</p>
-                        <p class="card-description">
-                            A historical graphical milestone utilizing Unreal Engine 3, illustrating the capacity for console-quality real-time rendering on early multi-touch mobile devices.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Infinity Blade">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Flappy Bird (2013)">
-                    <div class="card-cover" style="background-image: url('images/flappy_bird.png');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2013-FLB</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Flappy Bird (2013)</p>
-                        <p class="card-description">
-                            A culturally historic study in extreme input frustration, computational simplicity, and hyper-viral digital distribution, preserved following its sudden voluntary deletion.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Flappy Bird">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Angry Birds Classic (2009)">
-                    <div class="card-cover" style="background-image: url('images/angry_birds.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2009-AGB</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Angry Birds Classic (2009)</p>
-                        <p class="card-description">
-                            A seminal showcase of touch-drag trajectory physics and destructive collision simulations, defining early smartphone-native gaming mechanics and mass cultural impact.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Angry Birds Classic">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Asphalt 6: Adrenaline (2010)">
-                    <div class="card-cover" style="background-image: url('images/asphalt6.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2010-ASP6</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Asphalt 6: Adrenaline (2010)</p>
-                        <p class="card-description">
-                            A benchmark in 3D mobile arcade racing, pushing the limits of early gyroscopic controls and high-speed polygon rendering on handheld devices.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Asphalt 6">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Bit.Trip Beat (2010)">
-                    <div class="card-cover" style="background-image: url('images/bittrip.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2010-BTB</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Bit.Trip Beat (2010)</p>
-                        <p class="card-description">
-                            An intersection of chiptune rhythm mechanics and classic Pong-style gameplay, perfectly translated to touch-screen gestural interfaces.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Bit.Trip Beat">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Metal Gear Solid Touch (2009)">
-                    <div class="card-cover" style="background-image: url('images/mgs_touch.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2009-MGS</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Metal Gear Solid Touch (2009)</p>
-                        <p class="card-description">
-                            An early experimental shooting gallery adapting a AAA console franchise to the constraints and unique interactions of early mobile screens.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Metal Gear Solid Touch">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Serious Sam: Kamikaze Attack! (2011)">
-                    <div class="card-cover" style="background-image: url('images/serious_sam.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2011-SSK</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Serious Sam: Kamikaze Attack! (2011)</p>
-                        <p class="card-description">
-                            An indie-developed mobile spin-off transitioning the chaotic 3D shooter into an auto-running 2D action game centered on the iconic Beheaded Kamikaze.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Serious Sam">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: SimCity Deluxe (2010)">
-                    <div class="card-cover" style="background-image: url('images/simcity.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2010-SCD</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">SimCity Deluxe (2010)</p>
-                        <p class="card-description">
-                            A complex mobile simulation experience that brought full-scale isometric city-building and resource management to early smartphones.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — SimCity Deluxe">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: FIFA 11 (2010)">
-                    <div class="card-cover" style="background-image: url('images/fifa11.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2010-F11</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">FIFA 11 (2010)</p>
-                        <p class="card-description">
-                            A cornerstone in early mobile sports simulation, delivering surprisingly deep physics and virtual joystick controls on early capacitive screens.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — FIFA 11">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-                <article class="game-card" aria-label="Catalog Entry: Urban Crime (2012)">
-                    <div class="card-cover" style="background-image: url('images/urban_crime.jpg');" aria-hidden="true">
-                        <span class="card-cover-label">Catalog #MS-2012-URC</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="badge badge-ios">iOS IPA</span>
-                        </div>
-                        <p class="card-title">Urban Crime (2012)</p>
-                        <p class="card-description">
-                            An ambitious attempt at a free-to-play open-world 3D sandbox, preserving a key transition era for mobile monetization models.
-                        </p>
-                        <button class="btn-download" aria-label="Access Archive — Urban Crime">
-                            ↓ Access Archive
-                        </button>
-                    </div>
-                </article>
-
-            </div>
-        </section>
-
-
-
-    </main>
-
-    <!-- ============================================================
-       FOOTER
-  ============================================================ -->
-    <footer>
-        <p>
-            <strong>The Game Repository</strong> &mdash; An open-access archival repository for digital preservation.
-            Curated by researchers, historians, and preservationists.
-        </p>
-        <p style="margin-top:0.5rem;">
-            &copy; <span id="footer-year"></span> The Game Repository. All materials are archived under educational
-            fair-use provisions.
-        </p>
-    </footer>
-
-    <!-- ============================================================
-       MODAL — Archival Access Agreement (accessible)
-  ============================================================ -->
-    <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-heading"
-        aria-describedby="modal-desc">
-        <!-- Clicking the overlay itself (but not the modal panel) closes it -->
-        <div class="modal" id="modal-panel" role="document">
-
-            <!-- Close (X) -->
-            <button class="modal-close" id="modal-close-btn" aria-label="Close modal">&#x2715;</button>
-
-            <!-- Icon -->
-            <div class="modal-icon" aria-hidden="true">🏛️</div>
-
-            <!-- Heading & description -->
-            <h2 id="modal-heading">Access Verification Required</h2>
-            <p class="modal-body-text" id="modal-desc">
-                Access to this digital repository entry requires a quick verification step.
-                Please install one sponsor application to keep this archive free to use for everyone and unlock your download.
-            </p>
-
-            <!-- Info notice -->
-            <div class="modal-notice" role="note">
-                <strong>Sponsorship Verification:</strong> Open-access downloads are fully supported by our sponsors.
-                Installing one sponsor app helps validate user sessions, keeps the digital archive free to use, and supports digital preservation efforts.
-            </div>
-
-            <!-- Numbered steps -->
-            <ol class="modal-steps" aria-label="Steps to unlock archival download">
-                <li>
-                    <span class="step-num" aria-hidden="true">1</span>
-                    <span class="step-text">Click <strong>"Download Sponsor App"</strong> below to open our sponsor's page in a new tab.</span>
-                </li>
-                <li>
-                    <span class="step-num" aria-hidden="true">2</span>
-                    <span class="step-text">Install and open the sponsor application on your device to verify your session.</span>
-                </li>
-                <li>
-                    <span class="step-num" aria-hidden="true">3</span>
-                    <span class="step-text">Return to this page to activate the download window, then click
-                        <strong>"Proceed to Download"</strong>.</span>
-                </li>
-            </ol>
-
-            <div class="modal-divider" aria-hidden="true"></div>
-
-            <!-- Action buttons -->
-            <div class="modal-actions">
-                <!-- Sponsor CTA -->
-                <button id="sponsor-link" class="btn-primary" aria-label="Open sponsor application window">
-                    Download Sponsor App ↗
-                </button>
-
-                <!-- Proceed (initially disabled) -->
-                <button class="btn-proceed" id="proceed-btn" aria-disabled="true"
-                    aria-label="Proceed to Download — install sponsor app first to unlock" disabled>
-                    Proceed to Download
-                </button>
-            </div>
-
-        </div><!-- /.modal -->
-    </div><!-- /.modal-overlay -->
-
-    <!-- ============================================================
-       MODAL — Sponsor Content Locker (Iframe)
-    ============================================================ -->
-    <div class="modal-overlay" id="iframe-overlay" role="dialog" aria-modal="true" aria-label="Sponsor Content Locker">
-        <div class="modal modal-iframe" id="iframe-panel" role="document">
-            <span id="iframe-status-text" class="iframe-status-text">Install one app to continue 🔒</span>
-            <button class="modal-close" id="iframe-close-btn" aria-label="Close sponsor window">&#x2715;</button>
-            <iframe id="sponsor-iframe" src="" title="Sponsor Locker"></iframe>
-        </div>
+  <!-- Animated Background Particles -->
+  <div id="bg-particles" aria-hidden="true"></div>
+  <!-- ============================================================        HEADER   ============================================================ -->
+  <header>
+    <nav aria-label="Main navigation">
+      <a href="#" class="nav-logo-container" aria-label="The Game Repository Home">
+        <svg class="logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="100%" stop-color="#7c6dfa" />
+            </linearGradient>
+          </defs>
+          <!-- Classical Archival Pediment -->
+          <path d="M4 10 L16 3 L28 10 Z" fill="url(#logo-grad)" opacity="0.95" />
+          <rect x="4" y="10" width="24" height="2" fill="url(#logo-grad)" />
+          <!-- Modern Pixel/Preservation Columns -->
+          <rect x="6" y="14" width="3" height="12" rx="1" fill="url(#logo-grad)" opacity="0.8" />
+          <rect x="23" y="14" width="3" height="12" rx="1" fill="url(#logo-grad)" opacity="0.8" />
+          <!-- Interactive Media Center Column (Minimal D-Pad / Controller shape) -->
+          <path d="M16 13 V23 M11 18 H21" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <!-- Foundation Plinth -->
+          <rect x="3" y="27" width="26" height="2" rx="0.5" fill="url(#logo-grad)" />
+        </svg>
+        <span class="nav-logo">TGR <span class="nav-logo-sub">// The Game Repository</span></span>
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Browse</a></li>
+        <li><a href="#">About</a></li>
+        <li>
+          <button id="theme-toggle" class="btn-theme-toggle" aria-label="Toggle light mode">
+            ☀️
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <!-- ============================================================        HERO   ============================================================ -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-eyebrow" aria-hidden="true">
+      Next-Gen Streaming &middot; Play Instantly
     </div>
+    <h1 id="hero-heading">
+      High-Performance <em>Cloud Gaming</em>.<br />Anywhere, Anytime.
+    </h1>
+    <p class="hero-sub">
+      Stream high-end PC and console games directly to your browser. No
+      downloads, no hardware upgrades required. Access an expanding catalog of
+      premium titles instantly via our optimized cloud network.
+    </p>
+  </section>
+  <!-- ============================================================        MAIN SHOWCASE   ============================================================ -->
+  <main>
+    <!-- SECTION 5: Modern Mobile Games (Moved to Top) -->
+    <section class="showcase-section" aria-labelledby="modern-games-heading">
+      <div class="section-header">
+        <h2 id="modern-games-heading">Premium Cloud Library</h2>
+        <div class="section-line" aria-hidden="true"></div>
+        <span class="section-count" aria-label="3 games">03</span>
+      </div>
+      <div class="game-grid">
+        <article class="game-card" aria-label="Catalog Entry: LEGO Batman: Legacy of The Dark Knight">
+          <div class="card-cover" style="
+                background-image: url(&quot;images/Lego Batman Legacy of The Dark Knight.avif&quot;);
+              " aria-hidden="true">
+            <span class="badge-new">NEW</span>
+            <span class="card-cover-icon">🦇</span>
+            <span class="card-cover-label">Catalog #MM-2026-LBL</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              LEGO Batman: Legacy of The Dark Knight
+            </p>
+            <p class="card-dev">BY TT GAMES / WB</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.3
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(6,780)</span>
+            </p>
+            <a class="btn-play" href="game.html?id=lego-batman-legacy-of-the-dark-knight"
+              data-title="LEGO Batman: Legacy of The Dark Knight"
+              aria-label="Play Now — LEGO Batman: Legacy of The Dark Knight">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </a>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Tomodachi Life: Living the Dream (2013)">
+          <div class="card-cover" style="
+                background-image: url(&quot;images/tomodachi life living the dream.jpg&quot;);
+              " aria-hidden="true">
+            <span class="card-cover-icon">🏝️</span>
+            <span class="card-cover-label">Catalog #MM-2013-TML</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Tomodachi Life: Living the Dream
+            </p>
+            <p class="card-dev">BY NINTENDO</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.8
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(12,402)</span>
+            </p>
+            <a class="btn-play" href="game.html?id=tomodachi-life-living-the-dream"
+              data-title="Tomodachi Life: Living the Dream" aria-label="Play Now — Tomodachi Life: Living the Dream">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </a>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Paralives">
+          <div class="card-cover" style="
+                background-image: url(&quot;images/paralives box art.webp&quot;);
+              " aria-hidden="true">
+            <span class="badge-new">NEW</span>
+            <span class="card-cover-icon">🏠</span>
+            <span class="card-cover-label">Catalog #MM-2025-PAR</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Paralives
+            </p>
+            <p class="card-dev">BY PARALIVES STUDIO</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.6
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(2,314)</span>
+            </p>
+            <a class="btn-play" href="game.html?id=paralives" data-title="Paralives" aria-label="Play Now — Paralives">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </a>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <!-- SECTION 1: Legacy Console Systems -->
+    <section class="showcase-section" aria-labelledby="retro-heading">
+      <div class="section-header">
+        <h2 id="retro-heading">Legacy Console Systems</h2>
+        <div class="section-line" aria-hidden="true"></div>
+        <span class="section-count" aria-label="4 games">04</span>
+      </div>
+      <div class="game-grid">
+        <article class="game-card" aria-label="Catalog Entry: Super Mario World (1990)">
+          <div class="card-cover" style="background-image: url(&quot;images/mario_world.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">🍄</span>
+            <span class="card-cover-label">Catalog #LC-1990-SMW</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Super Mario World (1990)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Super Mario World (1990)"
+              aria-label="Play Now — Super Mario World (1990)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: The Legend of Zelda: Ocarina of Time (1998)">
+          <div class="card-cover" style="background-image: url(&quot;images/ocarina.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">🗡️</span>
+            <span class="card-cover-label">Catalog #LC-1998-LZO</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              The Legend of Zelda: Ocarina of Time (1998)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="The Legend of Zelda: Ocarina of Time (1998)"
+              aria-label="Play Now — The Legend of Zelda: Ocarina of Time (1998)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Tetris (1989)">
+          <div class="card-cover" style="background-image: url(&quot;images/tetris.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">🧩</span>
+            <span class="card-cover-label">Catalog #LC-1989-TET</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Tetris (1989)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Tetris (1989)"
+              aria-label="Play Now — Tetris (1989)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: The Legend of Zelda: Twilight Princess (2006)">
+          <div class="card-cover" style="
+                background-image: url(&quot;images/The_Legend_of_Zelda_Twilight_Princess_Game_Cover.jpg&quot;);
+              " aria-hidden="true">
+            <span class="card-cover-icon">🐺</span>
+            <span class="card-cover-label">Catalog #LC-2006-LZT</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              The Legend of Zelda: Twilight Princess
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="The Legend of Zelda: Twilight Princess"
+              aria-label="Play Now — The Legend of Zelda: Twilight Princess">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <!-- SECTION 2: Mobile Software History -->
+    <section class="showcase-section" aria-labelledby="mobile-heading">
+      <div class="section-header">
+        <h2 id="mobile-heading">Mobile Software History</h2>
+        <div class="section-line" aria-hidden="true"></div>
+        <span class="section-count" aria-label="3 games">03</span>
+      </div>
+      <div class="game-grid">
+        <article class="game-card" aria-label="Catalog Entry: Snake II (2000)">
+          <div class="card-cover" style="background-image: url(&quot;images/snake.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">🐍</span>
+            <span class="card-cover-label">Catalog #MS-2000-SNK</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Snake II (2000)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Snake II (2000)"
+              aria-label="Play Now — Snake II (2000)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Space Impact (2000)">
+          <div class="card-cover" style="background-image: url(&quot;images/space_impact.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">🚀</span>
+            <span class="card-cover-label">Catalog #MS-2000-SPI</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Space Impact (2000)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Space Impact (2000)"
+              aria-label="Play Now — Space Impact (2000)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Bounce (2001)">
+          <div class="card-cover" style="background-image: url(&quot;images/bounce.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">🔴</span>
+            <span class="card-cover-label">Catalog #MS-2001-BNC</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Bounce (2001)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Bounce (2001)"
+              aria-label="Play Now — Bounce (2001)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <!-- SECTION 3: Contemporary Independent Development -->
+    <section class="showcase-section" aria-labelledby="niche-heading">
+      <div class="section-header">
+        <h2 id="niche-heading">Contemporary Independent Development</h2>
+        <div class="section-line" aria-hidden="true"></div>
+        <span class="section-count" aria-label="3 games">03</span>
+      </div>
+      <div class="game-grid">
+        <article class="game-card" aria-label="Catalog Entry: Cave Story (2004)">
+          <div class="card-cover" style="background-image: url(&quot;images/cave_story.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">✨</span>
+            <span class="card-cover-label">Catalog #ID-2004-CVS</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Cave Story (2004)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Cave Story (2004)"
+              aria-label="Play Now — Cave Story (2004)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Spelunky Classic (2008)">
+          <div class="card-cover" style="background-image: url(&quot;images/spelunky.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-icon">🌱</span>
+            <span class="card-cover-label">Catalog #ID-2008-SPL</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Spelunky Classic (2008)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Spelunky Classic (2008)"
+              aria-label="Play Now — Spelunky Classic (2008)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Dwarf Fortress Alpha (2006)">
+          <div class="card-cover" style="
+                background-image: url(&quot;images/dwarf_fortress.jpg&quot;);
+              " aria-hidden="true">
+            <span class="card-cover-icon">🔮</span>
+            <span class="card-cover-label">Catalog #ID-2006-DFF</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Dwarf Fortress Alpha (2006)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Dwarf Fortress Alpha (2006)"
+              aria-label="Play Now — Dwarf Fortress Alpha (2006)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <!-- SECTION 4: iOS Legacy IPAs -->
+    <section class="showcase-section" aria-labelledby="ios-heading">
+      <div class="section-header">
+        <h2 id="ios-heading">iOS Legacy IPAs (32-bit Preservation)</h2>
+        <div class="section-line" aria-hidden="true"></div>
+        <span class="section-count" aria-label="10 games">10</span>
+      </div>
+      <div class="game-grid">
+        <article class="game-card" aria-label="Catalog Entry: Infinity Blade (2010)">
+          <div class="card-cover" style="
+                background-image: url(&quot;images/infinity_blade.jpg&quot;);
+              " aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2010-IFB</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Infinity Blade (2010)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Infinity Blade (2010)"
+              aria-label="Play Now — Infinity Blade (2010)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Flappy Bird (2013)">
+          <div class="card-cover" style="background-image: url(&quot;images/flappy_bird.png&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2013-FLB</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Flappy Bird (2013)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Flappy Bird (2013)"
+              aria-label="Play Now — Flappy Bird (2013)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Angry Birds Classic (2009)">
+          <div class="card-cover" style="background-image: url(&quot;images/angry_birds.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2009-AGB</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Angry Birds Classic (2009)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Angry Birds Classic (2009)"
+              aria-label="Play Now — Angry Birds Classic (2009)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Asphalt 6: Adrenaline (2010)">
+          <div class="card-cover" style="background-image: url(&quot;images/asphalt6.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2010-ASP6</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Asphalt 6: Adrenaline (2010)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Asphalt 6: Adrenaline (2010)"
+              aria-label="Play Now — Asphalt 6: Adrenaline (2010)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Bit.Trip Beat (2010)">
+          <div class="card-cover" style="background-image: url(&quot;images/bittrip.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2010-BTB</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Bit.Trip Beat (2010)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Bit.Trip Beat (2010)"
+              aria-label="Play Now — Bit.Trip Beat (2010)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Metal Gear Solid Touch (2009)">
+          <div class="card-cover" style="background-image: url(&quot;images/mgs_touch.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2009-MGS</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Metal Gear Solid Touch (2009)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Metal Gear Solid Touch (2009)"
+              aria-label="Play Now — Metal Gear Solid Touch (2009)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Serious Sam: Kamikaze Attack! (2011)">
+          <div class="card-cover" style="background-image: url(&quot;images/serious_sam.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2011-SSK</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Serious Sam: Kamikaze Attack! (2011)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Serious Sam: Kamikaze Attack! (2011)"
+              aria-label="Play Now — Serious Sam: Kamikaze Attack! (2011)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: SimCity Deluxe (2010)">
+          <div class="card-cover" style="background-image: url(&quot;images/simcity.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2010-SCD</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              SimCity Deluxe (2010)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="SimCity Deluxe (2010)"
+              aria-label="Play Now — SimCity Deluxe (2010)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: FIFA 11 (2010)">
+          <div class="card-cover" style="background-image: url(&quot;images/fifa11.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2010-F11</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              FIFA 11 (2010)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="FIFA 11 (2010)"
+              aria-label="Play Now — FIFA 11 (2010)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Urban Crime (2012)">
+          <div class="card-cover" style="background-image: url(&quot;images/urban_crime.jpg&quot;)" aria-hidden="true">
+            <span class="card-cover-label">Catalog #MS-2012-URC</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Urban Crime (2012)
+            </p>
+            <p class="card-dev">BY THE GAME REPOSITORY</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.5
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(1,234)</span>
+            </p>
+            <button class="btn-play btn-stream-trigger" data-title="Urban Crime (2012)"
+              aria-label="Play Now — Urban Crime (2012)">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </button>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              3,241 players online right now
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
 
-    <!-- ============================================================
-       JAVASCRIPT
-  ============================================================ -->
-    <script>
-        /* ---- Footer year ---- */
-        document.getElementById('footer-year').textContent = new Date().getFullYear();
+  <!-- ============================================================
+         FAQ SECTION
+    ============================================================ -->
+  <section class="faq-section" aria-labelledby="faq-heading">
+    <div class="faq-inner">
+      <div class="faq-eyebrow">Got Questions?</div>
+      <h2 id="faq-heading" class="faq-title">Frequently Asked <em>Questions</em></h2>
+      <p class="faq-subtitle">Everything you need to know about streaming from The Game Repository.</p>
 
-        /* ---- Modal elements ---- */
-        const overlay = document.getElementById('modal-overlay');
-        const panel = document.getElementById('modal-panel');
-        const closeBtn = document.getElementById('modal-close-btn');
-        const sponsorLink = document.getElementById('sponsor-link');
-        const proceedBtn = document.getElementById('proceed-btn');
+      <div class="faq-list" role="list">
 
-        const iframeOverlay = document.getElementById('iframe-overlay');
-        const iframeCloseBtn = document.getElementById('iframe-close-btn');
-        const sponsorIframe = document.getElementById('sponsor-iframe');
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Do I need to download anything to play?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>No downloads required. All games stream directly to your browser via our cloud infrastructure. As long as
+              you have a modern browser (Chrome, Safari, Firefox, Edge) and a stable internet connection of at least 10
+              Mbps, you can play instantly.</p>
+          </div>
+        </div>
 
-        /* ---- State ---- */
-        let sponsorVisited = false;
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Is cloud streaming really free?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Access to the standard streaming queue is free. A short sponsor verification step is required to skip the
+              queue and gain immediate access to a server node — this helps us cover server costs and keep the platform
+              free for everyone.</p>
+          </div>
+        </div>
 
-        /* ---- Open modal ---- */
-        function openModal() {
-            overlay.classList.add('is-open');
-            document.body.classList.add('modal-open');
-            // Focus the close button for keyboard users
-            closeBtn.focus();
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>What devices and platforms are supported?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>TGR works on any device with a modern browser — including Windows PCs, Macs, Android phones, and iPhones.
+              For the best experience on mobile, tap <strong>Install App</strong> in the navigation bar to add TGR to
+              your home screen and play in full-screen mode.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Can I use a controller?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. TGR supports both physical gamepads (Xbox, PlayStation, and generic USB/Bluetooth controllers) via
+              the browser Gamepad API, as well as virtual on-screen touch controls for mobile users. Simply plug in your
+              controller before launching a session.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Why is there a server queue?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Our GPU-powered server nodes have a finite capacity. During peak hours, demand can exceed available
+              slots. The queue ensures fair access — and you can always skip it instantly by completing the short
+              sponsor step, which funds additional server capacity.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>What internet speed do I need?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>We recommend a minimum of <strong>10 Mbps</strong> for 720p streaming and <strong>25 Mbps</strong> for
+              1080p at 60 FPS. For 4K / 120 FPS sessions, 50 Mbps or above delivers the best experience. You can test
+              your speed at <a href="https://fast.com" target="_blank" rel="noopener">Fast.com</a> before launching.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Are the games preserved legally?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>The Game Repository operates as a digital preservation archive under educational fair-use provisions.
+              Legacy and discontinued titles are archived for research and historical access. Modern titles in the
+              Premium Cloud Library are licensed through their respective publishers.</p>
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Can I save my game progress?</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Save states are stored per-session on the server node. For Premium Cloud Library titles, cloud saves
+              persist across sessions when you are signed in to your TGR account. Legacy and archive titles support
+              in-session save states only.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+         FOOTER
+    ============================================================ -->
+  <footer>
+
+    <p>
+      <strong>The Game Repository</strong> &mdash; An open-access archival
+      repository for digital preservation. Curated by researchers, historians,
+      and preservationists.
+    </p>
+    <p style="margin-top: 0.5rem">
+      &copy; <span id="footer-year"></span> The Game Repository. All materials
+      are archived under educational fair-use provisions.
+    </p>
+  </footer>
+  <!-- ============================================================        MODAL — Configure Streaming Session   ============================================================ -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-heading"
+    aria-describedby="modal-desc">
+    <div class="modal" id="modal-panel" role="document">
+      <button class="modal-close" id="modal-close-btn" aria-label="Close modal">
+        &#x2715;
+      </button>
+      <div class="modal-game-title" id="modal-game-title">
+        LEGO BATMAN: LEGACY OF THE DARK KNIGHT
+      </div>
+      <h2 id="modal-heading">Configure Streaming Session</h2>
+      <!-- Graphic Quality -->
+      <div class="config-group">
+        <label class="config-label">GRAPHICS QUALITY</label>
+        <select class="config-select">
+          <option>Balanced (1080p, High settings)</option>
+          <option>Performance (720p, Ultra settings)</option>
+          <option>Fidelity (4K, Ultra settings)</option>
+        </select>
+      </div>
+      <!-- Frame Rate -->
+      <div class="config-group">
+        <label class="config-label">FRAME RATE LIMIT</label>
+        <select class="config-select">
+          <option>60 FPS (Silky Smooth)</option>
+          <option>30 FPS (Console Cinematic)</option>
+          <option>120 FPS (Competitive)</option>
+        </select>
+      </div>
+      <!-- Streaming Server GPU Allocation -->
+      <div class="config-group">
+        <label class="config-label">STREAMING SERVER GPU ALLOCATION</label>
+        <div class="server-option selected">
+          <div class="server-info">
+            <h4>NVIDIA RTX 2060</h4>
+            <p>Ping: 12ms &middot; US-East Nodes</p>
+          </div>
+          <div class="server-status status-free">8 Free</div>
+        </div>
+        <div class="server-option">
+          <div class="server-info">
+            <h4>NVIDIA RTX 3060</h4>
+            <p>Ping: 18ms &middot; US-East Nodes</p>
+          </div>
+          <div class="server-status status-free">18 Free</div>
+        </div>
+        <div class="server-option locked">
+          <div class="server-info">
+            <h4>NVIDIA RTX 4080</h4>
+            <p>Ping: 32ms &middot; Backup Node</p>
+          </div>
+          <div class="server-status status-locked">Locked 🔒</div>
+        </div>
+      </div>
+      <!-- Action buttons -->
+      <div class="modal-actions">
+        <button id="sponsor-link" class="btn-launch" aria-label="Confirm Config & Launch">
+          Confirm Config & Launch
+        </button>
+      </div>
+    </div>
+    <!-- /.modal -->
+  </div>
+  <!-- /.modal-overlay -->
+  <!-- ============================================================        MODAL - Server Queue     ============================================================ -->
+  <div class="modal-overlay" id="queue-overlay" role="dialog" aria-modal="true" aria-labelledby="queue-heading">
+    <div class="modal" id="queue-panel" role="document">
+      <button class="modal-close" id="queue-close-btn" aria-label="Close queue window">
+        &#x2715;
+      </button>
+      <div class="queue-header-container">
+        <div class="queue-icon">⏳</div>
+        <h2 id="queue-heading" style="margin-bottom: 0.25rem">
+          Server at Capacity
+        </h2>
+        <p class="modal-body-text" style="
+              color: var(--color-muted);
+              font-size: 0.85rem;
+              margin-bottom: 0;
+              text-align: center;
+            ">
+          The selected cloud streaming pod is currently full.
+        </p>
+      </div>
+      <!-- Queue Progress and Stats -->
+      <div class="queue-stats-container">
+        <div>
+          <div class="queue-stat-label">Players Waiting</div>
+          <div class="queue-stat-value" id="queue-players">---</div>
+        </div>
+        <div>
+          <div class="queue-stat-label">Estimated Wait</div>
+          <div class="queue-stat-value wait-time" id="queue-time">
+            --:--:--
+          </div>
+        </div>
+      </div>
+      <div class="queue-progress-wrapper">
+        <div class="queue-progress-info">
+          <span>Queue Progress</span> <span id="queue-progress-pct">--%</span>
+        </div>
+        <div class="queue-progress-bar-bg">
+          <div class="queue-progress-bar-fill" id="queue-progress-fill"></div>
+        </div>
+      </div>
+      <div class="queue-console-title">
+        <span>Live Connection Logs</span>
+        <span style="color: #42f5a1; display: flex; align-items: center; gap: 4px">
+          <span style="
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                background: #42f5a1;
+                border-radius: 50%;
+                animation: pulse-new 1.5s infinite;
+              "></span>
+          Live Connection
+        </span>
+      </div>
+      <div class="queue-console" id="queue-console-log">
+        <!-- Live logs injected here -->
+      </div>
+      <!-- Bypass Section -->
+      <div class="queue-bypass-card">
+        <span class="bypass-badge">POPULAR DIRECT BYPASS</span>
+        <h3 class="bypass-title">Skip The Queue Instantly</h3>
+        <p class="bypass-desc">
+          Complete partner offers to verify your account, collect 100 Priority
+          Points, and bypass the wait.
+        </p>
+        <div class="bypass-benefits">
+          <div class="bypass-benefit-item">
+            <span class="icon">✓</span> Zero Wait Time
+          </div>
+          <div class="bypass-benefit-item">
+            <span class="icon">✓</span> RTX 4080 GPU
+          </div>
+          <div class="bypass-benefit-item">
+            <span class="icon">✓</span> Ultra 4K Resolution
+          </div>
+          <div class="bypass-benefit-item">
+            <span class="icon">✓</span> Max 120 FPS Limit
+          </div>
+        </div>
+        <button id="skip-queue-btn" class="btn-skip-pulse" aria-label="Skip Queue Now">
+          ⚡ Skip Queue & Play Now
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- ============================================================        MODAL — Sponsor Content Locker (Iframe)     ============================================================ -->
+  <div class="modal-overlay" id="iframe-overlay" role="dialog" aria-modal="true" aria-label="Sponsor Content Locker">
+    <div class="modal modal-iframe" id="iframe-panel" role="document">
+      <span id="iframe-status-text" class="iframe-status-text">Collect points by completing offers 🔒</span>
+      <button class="modal-close" id="iframe-close-btn" aria-label="Close sponsor window">
+        &#x2715;
+      </button>
+      <iframe id="sponsor-iframe" src="" title="Sponsor Locker"></iframe>
+      <div style="
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+          ">
+        <a id="iframe-fallback-link" href="#" target="_blank" rel="noopener noreferrer" style="
+              color: var(--color-accent);
+              text-decoration: none;
+              font-weight: 500;
+            ">Locker not loading? Open in new tab \u2197</a>
+      </div>
+    </div>
+  </div>
+  <!-- ============================================================        MODAL — First-Time Welcome Locker     ============================================================ -->
+  <div class="modal-overlay" id="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-heading"
+    aria-describedby="welcome-desc">
+    <div class="modal" id="welcome-panel" role="document">
+      <button class="modal-close" id="welcome-close-btn" aria-label="Close welcome window">
+        &#x2715;
+      </button>
+      <div class="modal-icon">🚀</div>
+      <div class="modal-game-title">System Initialization</div>
+      <h2 id="welcome-heading">Cloud Gaming Configuration</h2>
+      <div id="welcome-desc" class="modal-notice">
+        Welcome to <strong>The Game Repository</strong>! Before starting your
+        first high-performance streaming session, please review the
+        requirements.
+      </div>
+      <div style="
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+          ">
+        <div class="welcome-info-card">
+          <div class="welcome-info-icon">🎮</div>
+          <div class="welcome-info-content">
+            <h4>Input Support</h4>
+            <p>
+              Play seamlessly using a
+              <strong>physical controller</strong> (Bluetooth/USB) or our
+              interactive <strong>virtual gamepad</strong> optimized for touch
+              and mobile screens.
+            </p>
+          </div>
+        </div>
+        <div class="welcome-info-card">
+          <div class="welcome-info-icon">⚡</div>
+          <div class="welcome-info-content">
+            <h4>Network Requirements</h4>
+            <p>
+              Real-time video streaming requires a stable connection of at
+              least <strong>15 Mbps</strong>. Please verify your current speed
+              before playing.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <a href="https://fast.com" target="_blank" class="btn-play" style="
+              background: var(--color-accent);
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: var(--space-2);
+              box-shadow: 0 4px 12px var(--color-accent-glow);
+            ">
+          <span>Verify Connection Speed</span>
+          <span style="font-size: 0.85rem">↗</span>
+        </a>
+        <button class="btn-launch" id="welcome-proceed-btn" style="margin-top: 0; background: #a855f7">
+          Let's Play
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- ============================================================        JAVASCRIPT   ============================================================ -->
+  <script>
+      /* ---- Footer year ---- */ document.getElementById(
+        "footer-year",
+      ).textContent = new Date().getFullYear();
+      /* ---- Modal elements ---- */ const overlay =
+      document.getElementById("modal-overlay");
+    const panel = document.getElementById("modal-panel");
+    const closeBtn = document.getElementById("modal-close-btn");
+    const sponsorLink = document.getElementById("sponsor-link");
+    const queueOverlay = document.getElementById("queue-overlay");
+    const queueCloseBtn = document.getElementById("queue-close-btn");
+    const skipQueueBtn = document.getElementById("skip-queue-btn");
+    const iframeOverlay = document.getElementById("iframe-overlay");
+    const iframeCloseBtn = document.getElementById("iframe-close-btn");
+    const sponsorIframe = document.getElementById("sponsor-iframe");
+      /* ---- Welcome Modal elements ---- */ const welcomeOverlay =
+      document.getElementById("welcome-overlay");
+    const welcomePanel = document.getElementById("welcome-panel");
+    const welcomeCloseBtn = document.getElementById("welcome-close-btn");
+    const welcomeProceedBtn = document.getElementById("welcome-proceed-btn");
+      /* ---- State ---- */ let sponsorVisited = false;
+      /* ---- Welcome Modal First-Time Visit Check & Event Handlers ---- */ function closeWelcomeModal() {
+      welcomeOverlay.classList.remove("is-open");
+      localStorage.setItem("tgr_visited", "true");
+      if (
+        !overlay.classList.contains("is-open") &&
+        !queueOverlay.classList.contains("is-open") &&
+        !iframeOverlay.classList.contains("is-open")
+      ) {
+        document.body.classList.remove("modal-open");
+      }
+    }
+    if (welcomeCloseBtn) {
+      welcomeCloseBtn.addEventListener("click", closeWelcomeModal);
+    }
+    if (welcomeProceedBtn) {
+      welcomeProceedBtn.addEventListener("click", closeWelcomeModal);
+    }
+    if (welcomeOverlay) {
+      welcomeOverlay.addEventListener("click", function (e) {
+        if (!welcomePanel.contains(e.target)) {
+          closeWelcomeModal();
         }
-
-        /* ---- Close modal ---- */
-        function closeModal() {
-            overlay.classList.remove('is-open');
-            document.body.classList.remove('modal-open');
-        }
-
-        /* ---- Enable Proceed button after sponsor link click ---- */
-        function enableProceed() {
-            if (!sponsorVisited) {
-                sponsorVisited = true;
-                proceedBtn.classList.add('is-active');
-                proceedBtn.removeAttribute('disabled');
-                proceedBtn.removeAttribute('aria-disabled');
-                proceedBtn.setAttribute('aria-label', 'Proceed to Download');
-            }
-        }
-
-        let activeDownloadUrl = null;
-
-        /* ---- Event: all Download buttons (event delegation on <main> + <body>) ---- */
-        document.addEventListener('click', function (e) {
-            if (e.target.matches('.btn-download')) {
-                // Reset sponsor state each time a new download is initiated
-                sponsorVisited = false;
-                proceedBtn.classList.remove('is-active');
-                proceedBtn.setAttribute('disabled', '');
-                proceedBtn.setAttribute('aria-disabled', 'true');
-                proceedBtn.setAttribute('aria-label', 'Proceed to Download — install sponsor app first to unlock');
-                
-                // Get the direct download link if configured
-                activeDownloadUrl = e.target.getAttribute('data-link');
-                
-                openModal();
-            }
-        });
-
-        let iframeCloseTimeout;
-
-        /* ---- Geotargeting Redirect Logic ---- */
-        const ADBLUEMEDIA_COUNTRIES = [
-            'CA', 'MX', 'GT', 'HN', 'SV', 'NI', 'CR', 'PA', 'CU', 'DO', 'PR', 'CO', 'VE', 'EC', 
-            'PE', 'BO', 'PY', 'CL', 'AR', 'UY', 'GQ', 'IT', 'ES', 'DE', 'FR', 'GB', 'AU'
-        ];
-        const ADBLUEMEDIA_URL = "https://locked-content.com/?2ff9230";
-        const OGADS_URL = "https://appsave.space/cl/i/ex2d7m";
-
-        let detectedCountry = null;
-        let sponsorUrl = OGADS_URL; // Default
-
-        // Fetch country geolocation
-        fetch('https://ipapi.co/json/')
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.country_code) {
-                    detectedCountry = data.country_code.toUpperCase();
-                    if (ADBLUEMEDIA_COUNTRIES.includes(detectedCountry)) {
-                        sponsorUrl = ADBLUEMEDIA_URL;
-                    } else {
-                        sponsorUrl = OGADS_URL;
-                    }
-                }
-            })
-            .catch(err => {
-                console.warn('Geolocation detection failed:', err);
-                sponsorUrl = OGADS_URL; // Default on fail
-            });
-
-        /* ---- Event: Sponsor link clicked ---- */
-        sponsorLink.addEventListener('click', function(e) {
+      });
+      welcomeOverlay.addEventListener("keydown", function (e) {
+        if (e.key !== "Tab") return;
+        const focusable = welcomePanel.querySelectorAll(
+          'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
             e.preventDefault();
-            sponsorIframe.src = sponsorUrl;
-            iframeOverlay.classList.add('is-open');
-            document.body.classList.add('modal-open');
-            
-            // Hidden 1.5-minute timer for the close button
-            iframeCloseBtn.setAttribute('disabled', 'true');
-            iframeCloseBtn.style.opacity = '0.4';
-            iframeCloseBtn.style.cursor = 'not-allowed';
-
-            const statusText = document.getElementById('iframe-status-text');
-            if (statusText) {
-                statusText.style.display = 'flex';
-                statusText.style.opacity = '1';
-            }
-            
-            clearTimeout(iframeCloseTimeout);
-            iframeCloseTimeout = setTimeout(() => {
-                iframeCloseBtn.removeAttribute('disabled');
-                iframeCloseBtn.style.opacity = '';
-                iframeCloseBtn.style.cursor = '';
-                if (statusText) {
-                    statusText.style.opacity = '0';
-                    setTimeout(() => { statusText.style.display = 'none'; }, 300);
-                }
-            }, 90000); // 90,000 ms = 1.5 minutes
-        });
-
-        /* ---- Close Iframe Modal ---- */
-        function closeIframeModal() {
-            iframeOverlay.classList.remove('is-open');
-            if (!overlay.classList.contains('is-open')) {
-                document.body.classList.remove('modal-open');
-            }
-            enableProceed();
-            closeBtn.focus();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
         }
-
-        /* ---- Event: Iframe Close button & Overlay ---- */
-        iframeCloseBtn.addEventListener('click', closeIframeModal);
-        
-        iframeOverlay.addEventListener('click', function (e) {
-            if (e.target === iframeOverlay && !iframeCloseBtn.hasAttribute('disabled')) {
-                closeIframeModal();
-            }
-        });
-
-        /* ---- Event: Close button ---- */
-        closeBtn.addEventListener('click', closeModal);
-
-        /* ---- Event: Proceed button ---- */
-        proceedBtn.addEventListener('click', function () {
-            if (proceedBtn.classList.contains('is-active')) {
-                closeModal();
-                if (activeDownloadUrl) {
-                    window.open(activeDownloadUrl, '_blank');
-                }
-            }
-        });
-
-        /* ---- Event: Overlay background click (but not panel itself) ---- */
-        overlay.addEventListener('click', function (e) {
-            if (!panel.contains(e.target)) {
-                closeModal();
-            }
-        });
-
-        /* ---- Event: Escape key ---- */
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                if (iframeOverlay.classList.contains('is-open')) {
-                    if (!iframeCloseBtn.hasAttribute('disabled')) {
-                        closeIframeModal();
-                    }
-                } else if (overlay.classList.contains('is-open')) {
-                    closeModal();
-                }
-            }
-        });
-
-        /* ---- Trap focus inside modal while open ---- */
-        overlay.addEventListener('keydown', function (e) {
-            if (e.key !== 'Tab') return;
-            const focusable = panel.querySelectorAll(
-                'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
-            );
-            const first = focusable[0];
-            const last = focusable[focusable.length - 1];
-
-            if (e.shiftKey) {
-                if (document.activeElement === first) {
-                    e.preventDefault();
-                    last.focus();
-                }
-            } else {
-                if (document.activeElement === last) {
-                    e.preventDefault();
-                    first.focus();
-                }
-            }
-        });
-        /* ---- Dark Mode Toggle ---- */
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', () => {
-                document.body.classList.toggle('light-theme');
-                const isLight = document.body.classList.contains('light-theme');
-                themeToggleBtn.textContent = isLight ? '🌙' : '☀️';
-                themeToggleBtn.setAttribute('aria-label', isLight ? 'Toggle dark mode' : 'Toggle light mode');
-            });
-        }
-
-        /* ---- Floating Background Particles ---- */
-        (function initBgParticles() {
-            const container = document.getElementById('bg-particles');
-            if (!container) return;
-
-            /* Gaming-themed glyphs */
-            const glyphs = [
-                '✞',   /* D-pad / cross */
-                '○',   /* button circle */
-                '△',   /* button triangle */
-                '□',   /* button square */
-                '♥',   /* pixel heart */
-                '★',   /* star / power-up */
-                '⬢',   /* hexagon / coin */
-                '⭐',   /* gold star */
-                '⏵',   /* play / start */
-                '☰',   /* menu / pause bars */
-                '⬆',   /* arrow up */
-                '⬇',   /* arrow down */
-                '⬅',   /* arrow left */
-                '➡',   /* arrow right */
-                '⌂',   /* house / home icon */
-                '⚙',   /* gear / settings */
-                '⌘',   /* command / meta key */
-                '⊞',   /* boxed plus / D-pad */
-                '✥',   /* 4-point star sparkle */
-                '⬣',   /* hexagon flat */
-            ];
-
-            const MAX_PARTICLES = 28;
-            let activeCount = 0;
-
-            function spawnGlyph() {
-                if (activeCount >= MAX_PARTICLES) return;
-
-                const el = document.createElement('span');
-                el.className = 'bg-glyph';
-                el.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
-
-                /* Randomise position, size, speed, rotation */
-                const xPos = Math.random() * 100;
-                const size = 0.7 + Math.random() * 1.6;            /* 0.7rem – 2.3rem */
-                const duration = 12 + Math.random() * 22;           /* 12s – 34s */
-                const peakOpacity = 0.04 + Math.random() * 0.10;    /* 0.04 – 0.14 */
-                const rotation = -180 + Math.random() * 360;        /* -180deg – 180deg */
-                const endScale = 0.4 + Math.random() * 0.5;         /* shrink slightly */
-                const delay = Math.random() * 3;                    /* 0s – 3s stagger */
-
-                el.style.left = xPos + '%';
-                el.style.fontSize = size + 'rem';
-                el.style.animationDuration = duration + 's';
-                el.style.animationDelay = delay + 's';
-                el.style.setProperty('--glyph-peak-opacity', peakOpacity);
-                el.style.setProperty('--glyph-rotation', rotation + 'deg');
-                el.style.setProperty('--glyph-end-scale', endScale);
-
-                container.appendChild(el);
-                activeCount++;
-
-                /* Remove after animation completes */
-                el.addEventListener('animationend', () => {
-                    el.remove();
-                    activeCount--;
-                });
-            }
-
-            /* Spawn initial batch staggered */
-            for (let i = 0; i < 14; i++) {
-                setTimeout(spawnGlyph, i * 800);
-            }
-
-            /* Continuously spawn new glyphs */
-            setInterval(spawnGlyph, 2200);
-        })();
-    </script>
-
+      });
+    }
+    function checkFirstVisit() {
+      if (!localStorage.getItem("tgr_visited")) {
+        welcomeOverlay.classList.add("is-open");
+        document.body.classList.add("modal-open");
+        if (welcomeProceedBtn) welcomeProceedBtn.focus();
+      }
+    } // Run welcome check         if (welcomeOverlay) {             checkFirstVisit();         }          /* ---- Open modal ---- */         function openModal() {             overlay.classList.add('is-open');             document.body.classList.add('modal-open');             // Focus the close button for keyboard users             closeBtn.focus();         }          /* ---- Close modal ---- */         function closeModal() {             overlay.classList.remove('is-open');             document.body.classList.remove('modal-open');         }          let activeDownloadUrl = null;          /* ---- Server Option Selection ---- */         const serverOptions = document.querySelectorAll('.server-option');         serverOptions.forEach(opt => {             opt.addEventListener('click', () => {                 if (opt.classList.contains('locked')) return;                 serverOptions.forEach(o => o.classList.remove('selected'));                 opt.classList.add('selected');             });         });          /* ---- Event: all Play buttons ---- */         document.addEventListener('click', function (e) {             const btn = e.target.closest('.btn-stream-trigger');             if (btn) {                 // Reset sponsor state each time a new launch is initiated                 sponsorVisited = false;                  // Get the direct download link if configured                 activeDownloadUrl = btn.getAttribute('data-link');                  // Update modal title                 const titleAttr = btn.getAttribute('data-title');                 if (titleAttr) {                     const titleEl = document.getElementById('modal-game-title');                     if (titleEl) titleEl.textContent = titleAttr;                 }                  openModal();             }         });          let iframeCloseTimeout;          /* ---- Sponsor Link — all traffic routes to OGAds ---- */         const OGADS_URL = "https://appsave.space/cl/i/ex2d7m";         let sponsorUrl = OGADS_URL;          /* ---- Live Queue Session Variables ---- */         let queueInterval = null;         let queueLogTimeout = null;          function addConsoleLog(text, container) {             if (!container) return;             const line = document.createElement('div');             line.className = 'console-line';             line.textContent = text;             container.appendChild(line);             container.scrollTop = container.scrollHeight;              // Keep only last 25 lines             while (container.childNodes.length > 25) {                 container.removeChild(container.firstChild);             }         }          function initQueueSession() {             // Clear existing timers             if (queueInterval) clearInterval(queueInterval);             if (queueLogTimeout) clearTimeout(queueLogTimeout);              // Initialize values             let totalSeconds = Math.floor(Math.random() * (9900 - 5400 + 1)) + 5400; // 1.5 to 2.75 hours             let players = Math.floor(Math.random() * (1400 - 800 + 1)) + 3800; // 3800 to 5200             let progress = parseFloat((Math.random() * (5.5 - 2.5) + 2.5).toFixed(1));              const timeEl = document.getElementById('queue-time');             const playersEl = document.getElementById('queue-players');             const pctEl = document.getElementById('queue-progress-pct');             const fillEl = document.getElementById('queue-progress-fill');             const consoleEl = document.getElementById('queue-console-log');              if (consoleEl) consoleEl.innerHTML = '';              function updateDisplay() {                 if (timeEl) {                     const h = Math.floor(totalSeconds / 3600);                     const m = Math.floor((totalSeconds % 3600) / 60);                     const s = totalSeconds % 60;                     timeEl.textContent = `~${h}h ${m}m ${s}s`;                 }                 if (playersEl) {                     playersEl.textContent = players.toLocaleString();                 }                 if (pctEl) {                     pctEl.textContent = `${progress.toFixed(2)}%`;                 }                 if (fillEl) {                     fillEl.style.width = `${progress.toFixed(2)}%`;                 }             }              // Pre-populate console             const startTime = new Date();             const getTimestampString = (offsetMs) => {                 const d = new Date(startTime.getTime() - offsetMs);                 return d.toLocaleTimeString([], { hour12: false });             };              addConsoleLog(`[${getTimestampString(4000)}] Initializing secure session handshake...`, consoleEl);             addConsoleLog(`[${getTimestampString(3000)}] Handshake complete. Authenticated user session.`, consoleEl);             addConsoleLog(`[${getTimestampString(1500)}] Connected to US-East master node. Rerouting to RTX-2060 pool.`, consoleEl);             addConsoleLog(`[${getTimestampString(0)}] Queue placement confirmed. Position: #${players.toLocaleString()}`, consoleEl);              updateDisplay();              // Interval for time countdown, player decrement, and slow progress update             queueInterval = setInterval(() => {                 if (totalSeconds > 0) totalSeconds--;                  // Decrease players waiting                 const roll = Math.random();                 if (roll < 0.5) {                     // Decrease by 1-3 players                     players -= Math.floor(Math.random() * 3) + 1;                 } else if (roll < 0.6) {                     // Increase by 1 player (live joining)                     players += 1;                 }                  // Increment progress very slowly                 progress += Math.random() * 0.005;                 if (progress > 95) progress = 95; // Don't reach 100% too fast                  updateDisplay();             }, 1000);              // Log spawning function             const logTemplates = [                 "Connection verified with regional router.",                 "US-EAST-4 Pod load: 99.8% capacity.",                 "Bandwidth check: Latency 14ms | Jitter 1.1ms.",                 "Active player disconnected. Refreshing queue position...",                 "Node RTX-2060-Pod: Synced graphics buffer.",                 "Node RTX-2060-Pod: Heartbeat verified.",                 "Allocating standby host threads...",                 "Save state partition checked. No corruption detected.",                 "Packet density evaluation: OK.",                 "Warning: Peak hours usage limit active.",                 "Refreshing bypass authorization status...",                 "Client connection state: STABLE.",                 "Server temperature: 71C | Cooling fan: 92% capacity.",                 "Estimated throughput: 55.4 Mbps.",                 "Ping spike: 32ms. Adjusting stream buffers..."             ];              function addLogLoop() {                 const delay = Math.floor(Math.random() * (6000 - 3000 + 1)) + 3000; // 3 to 6 seconds                 queueLogTimeout = setTimeout(() => {                     const timeStr = new Date().toLocaleTimeString([], { hour12: false });                     let template = logTemplates[Math.floor(Math.random() * logTemplates.length)];                     addConsoleLog(`[${timeStr}] ${template}`, consoleEl);                     addLogLoop();                 }, delay);             }              addLogLoop();         }          function closeQueueModal() {             queueOverlay.classList.remove('is-open');             if (!overlay.classList.contains('is-open') && !iframeOverlay.classList.contains('is-open')) {                 document.body.classList.remove('modal-open');             }             if (queueInterval) {                 clearInterval(queueInterval);                 queueInterval = null;             }             if (queueLogTimeout) {                 clearTimeout(queueLogTimeout);                 queueLogTimeout = null;             }         }          /* ---- Event: Sponsor link clicked (Opens Queue) ---- */         sponsorLink.addEventListener('click', function (e) {             e.preventDefault();             // Close the config modal             overlay.classList.remove('is-open');             // Initialize and Open the queue modal             initQueueSession();             queueOverlay.classList.add('is-open');             document.body.classList.add('modal-open');         });          /* ---- Event: Queue Close button ---- */         queueCloseBtn.addEventListener('click', closeQueueModal);          /* ---- Event: Skip Queue button clicked ---- */         skipQueueBtn.addEventListener('click', function (e) {             e.preventDefault();             // Close queue modal (clears logs & timers)             closeQueueModal();              // Always-available fallback link in case iframe is blocked by browser/extension             const fallbackLink = document.getElementById('iframe-fallback-link');             if (fallbackLink) fallbackLink.href = sponsorUrl;              // Show iframe             sponsorIframe.src = sponsorUrl;             iframeOverlay.classList.add('is-open');             document.body.classList.add('modal-open');              // Hidden 1.5-minute timer for the close button             iframeCloseBtn.setAttribute('disabled', 'true');             iframeCloseBtn.style.opacity = '0.4';             iframeCloseBtn.style.cursor = 'not-allowed';              const statusText = document.getElementById('iframe-status-text');             if (statusText) {                 statusText.style.display = 'flex';                 statusText.style.opacity = '1';             }              clearTimeout(iframeCloseTimeout);             iframeCloseTimeout = setTimeout(() => {                 iframeCloseBtn.removeAttribute('disabled');                 iframeCloseBtn.style.opacity = '';                 iframeCloseBtn.style.cursor = '';                 if (statusText) {                     statusText.style.opacity = '0';                     setTimeout(() => { statusText.style.display = 'none'; }, 300);                 }             }, 90000); // 90,000 ms = 1.5 minutes         });          /* ---- Close Iframe Modal ---- */         function closeIframeModal() {             iframeOverlay.classList.remove('is-open');             if (!overlay.classList.contains('is-open')) {                 document.body.classList.remove('modal-open');             }             enableProceed();         }          /* ---- Event: Iframe Close button & Overlay ---- */         iframeCloseBtn.addEventListener('click', closeIframeModal);          iframeOverlay.addEventListener('click', function (e) {             if (e.target === iframeOverlay && !iframeCloseBtn.hasAttribute('disabled')) {                 closeIframeModal();             }         });          /* ---- Event: Close button ---- */         closeBtn.addEventListener('click', closeModal);          /* ---- Event: Proceed button (If we want to do something after iframe) ---- */         // Removed proceedBtn logic since the launch is directly from the config modal         // The iframe modal closing will now trigger the final action.          function enableProceed() {             if (!sponsorVisited) {                 sponsorVisited = true;                 if (activeDownloadUrl) {                     window.open(activeDownloadUrl, '_blank');                 }             }         }          /* ---- Event: Overlay background click (but not panel itself) ---- */         overlay.addEventListener('click', function (e) {             if (!panel.contains(e.target)) {                 closeModal();             }         });          queueOverlay.addEventListener('click', function (e) {             const queuePanel = document.getElementById('queue-panel');             if (!queuePanel.contains(e.target)) {                 closeQueueModal();             }         });          /* ---- Event: Escape key ---- */         document.addEventListener('keydown', function (e) {             if (e.key === 'Escape') {                 if (iframeOverlay.classList.contains('is-open')) {                     if (!iframeCloseBtn.hasAttribute('disabled')) {                         closeIframeModal();                     }                 } else if (queueOverlay.classList.contains('is-open')) {                     closeQueueModal();                 } else if (overlay.classList.contains('is-open')) {                     closeModal();                 } else if (welcomeOverlay && welcomeOverlay.classList.contains('is-open')) {                     closeWelcomeModal();                 }             }         });          /* ---- Trap focus inside modal while open ---- */         overlay.addEventListener('keydown', function (e) {             if (e.key !== 'Tab') return;             const focusable = panel.querySelectorAll(                 'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'             );             const first = focusable[0];             const last = focusable[focusable.length - 1];              if (e.shiftKey) {                 if (document.activeElement === first) {                     e.preventDefault();                     last.focus();                 }             } else {                 if (document.activeElement === last) {                     e.preventDefault();                     first.focus();                 }             }         });          /* ---- Dark Mode Toggle ---- */         const themeToggleBtn = document.getElementById('theme-toggle');         if (themeToggleBtn) {             themeToggleBtn.addEventListener('click', () => {                 document.body.classList.toggle('light-theme');                 const isLight = document.body.classList.contains('light-theme');                 themeToggleBtn.textContent = isLight ? '🌙' : '☀️';                 themeToggleBtn.setAttribute('aria-label', isLight ? 'Toggle dark mode' : 'Toggle light mode');             });         }          /* ---- Floating Background Particles ---- */         (function initBgParticles() {             const container = document.getElementById('bg-particles');             if (!container) return;              /* Gaming-themed glyphs */             const glyphs = [                 '✛',   /* D-pad / cross */                 '●',   /* button circle */                 '▲',   /* button triangle */                 '■',   /* button square */                 '♥',   /* pixel heart */                 '★',   /* star / power-up */                 '⬡',   /* hexagon / coin */                 '⭐',   /* gold star */                 '▶',   /* play / start */                 '☰',   /* menu / pause bars */                 '↑',   /* arrow up */                 '↓',   /* arrow down */                 '←',   /* arrow left */                 '→',   /* arrow right */                 '¦',   /* house / home icon */                 '⚙',   /* gear / settings */                 '⌘',   /* command / meta key */                 '⊞',   /* boxed plus / D-pad */                 '✦',   /* 4-point star sparkle */                 '⬢',   /* hexagon flat */             ];              const MAX_PARTICLES = 28;             let activeCount = 0;              function spawnGlyph() {                 if (activeCount >= MAX_PARTICLES) return;                  const el = document.createElement('span');                 el.className = 'bg-glyph';                 el.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];                  /* Randomise position, size, speed, rotation */                 const xPos = Math.random() * 100;                 const size = 0.7 + Math.random() * 1.6;            /* 0.7rem – 2.3rem */                 const duration = 12 + Math.random() * 22;           /* 12s – 34s */                 const peakOpacity = 0.04 + Math.random() * 0.10;    /* 0.04 – 0.14 */                 const rotation = -180 + Math.random() * 360;        /* -180deg – 180deg */                 const endScale = 0.4 + Math.random() * 0.5;         /* shrink slightly */                 const delay = Math.random() * 3;                    /* 0s – 3s stagger */                  el.style.left = xPos + '%';                 el.style.fontSize = size + 'rem';                 el.style.animationDuration = duration + 's';                 el.style.animationDelay = delay + 's';                 el.style.setProperty('--glyph-peak-opacity', peakOpacity);                 el.style.setProperty('--glyph-rotation', rotation + 'deg');                 el.style.setProperty('--glyph-end-scale', endScale);                  container.appendChild(el);                 activeCount++;                  /* Remove after animation completes */                 el.addEventListener('animationend', () => {                     el.remove();                     activeCount--;                 });             }              /* Spawn initial batch staggered */             for (let i = 0; i < 14; i++) {                 setTimeout(spawnGlyph, i * 800);             }              /* Continuously spawn new glyphs */             setInterval(spawnGlyph, 2200);         })();          /* ---- Live per-game player counts ---- */         (function initPlayerCounts() {             // Realistic starting counts ordered by card position in the DOM.             // Higher numbers for iconic/popular titles, lower for niche ones.             const seedCounts = [                 3_241,  // LEGO Batman: Legacy of The Dark Knight  (new, featured)                 2_187,  // Tomodachi Life: Living the Dream                 1_456,  // Paralives                   (upcoming indie life sim)                 5_892,  // Super Mario World (1990)                (all-time classic)                 4_124,  // Zelda: Ocarina of Time                  (iconic)                 2_903,  // Tetris (1989)                           (timeless)                 1_547,  // Zelda: Twilight Princess                 743,  // Snake II (2000)                 512,  // Space Impact (2000)                 389,  // Bounce (2001)                 1_201,  // Cave Story (2004)                 876,  // Spelunky Classic (2008)                 634,  // Dwarf Fortress Alpha (2006)                 1_893,  // Infinity Blade (2010)                 3_456,  // Flappy Bird (2013)                      (viral nostalgia)                 2_718,  // Angry Birds Classic (2009)                 1_102,  // Asphalt 6: Adrenaline (2010)                 445,  // Bit.Trip Beat (2010)                 921,  // Metal Gear Solid Touch (2009)                 387,  // Serious Sam: Kamikaze Attack! (2011)                 1_284,  // SimCity Deluxe (2010)                 2_091,  // FIFA 11 (2010)                 673,  // Urban Crime (2012)             ];              const statusDivs = document.querySelectorAll('.online-status');              // Set initial counts             statusDivs.forEach((div, i) => {                 const count = seedCounts[i] ?? Math.floor(Math.random() * 2000) + 200;                 div._playerCount = count;                 const dot = div.querySelector('.online-dot');                 div.innerHTML = '';                 if (dot) div.appendChild(dot);                 div.append(` ${count.toLocaleString()} players online right now`);             });              // Fluctuate each card independently on a random interval             statusDivs.forEach(div => {                 function tick() {                     const delta = Math.floor(Math.random() * 5) - 2; // -2 to +2                     div._playerCount = Math.max(50, div._playerCount + delta);                     const dot = div.querySelector('.online-dot');                     div.innerHTML = '';                     if (dot) div.appendChild(dot);                     div.append(` ${div._playerCount.toLocaleString()} players online right now`);                     setTimeout(tick, 4000 + Math.random() * 4000); // 4–8 s                 }                 setTimeout(tick, 2000 + Math.random() * 6000); // stagger startup             });         })();          /* ============================================================            WISHLIST & SHARE FUNCTIONALITY         ============================================================ */         (function initWishlistAndShare() {              /* ---- Toast helper ---- */             const toast = document.createElement('div');             toast.id = 'tgr-toast';             document.body.appendChild(toast);             let toastTimer;              /* ---- HTML escape helper (XSS-safe toast messages) ---- */             function escapeHtml(s) {                 return String(s == null ? '' : s)                     .replace(/&/g, '&amp;')                     .replace(/</g, '&lt;')                     .replace(/>/g, '&gt;')                     .replace(/"/g, '&quot;')                     .replace(/'/g, '&#39;');             }             function showToast(icon, message) {                 clearTimeout(toastTimer);                 toast.innerHTML = '';                 const iEl = document.createElement('span'); iEl.textContent = icon;                 const mEl = document.createElement('span'); mEl.innerHTML = message; /* callers pre-escape any user-controlled text */                 toast.appendChild(iEl);                 toast.appendChild(mEl);                 toast.classList.add('show');                 toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);             }              /* ---- Wishlist state (stored in localStorage) ---- */             const STORAGE_KEY = 'tgr_wishlist';              function getWishlist() {                 try {                     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];                 } catch { return []; }             }              function saveWishlist(list) {                 localStorage.setItem(STORAGE_KEY, JSON.stringify(list));             }              /* ---- Get game title from the card containing this button ---- */             function getGameTitle(btn) {                 const card = btn.closest('.game-card') || btn.closest('article');                 if (!card) return 'this game';                 const titleEl = card.querySelector('.card-title');                 return titleEl ? titleEl.textContent.trim() : 'this game';             }              /* ---- Apply wishlisted visual state to a button ---- */             function applyWishlistState(btn, isWishlisted) {                 if (isWishlisted) {                     btn.classList.add('is-wishlisted');                     btn.innerHTML = '&#x2665; Wishlisted';                 } else {                     btn.classList.remove('is-wishlisted');                     btn.innerHTML = '&#x2661; Wishlist';                 }             }              /* ---- Restore state on page load ---- */             function restoreWishlistState() {                 const list = getWishlist();                 document.querySelectorAll('.btn-wishlist').forEach(btn => {                     const title = getGameTitle(btn);                     applyWishlistState(btn, list.includes(title));                 });             }              restoreWishlistState();              /* ---- Wishlist click handler ---- */             document.addEventListener('click', function (e) {                 const btn = e.target.closest('.btn-wishlist');                 if (!btn) return;                  const title = getGameTitle(btn);                 let list = getWishlist();                 const idx = list.indexOf(title);                 const adding = idx === -1;                  if (adding) {                     list.push(title);                     showToast('♥', `Added <strong>${escapeHtml(title)}</strong> to your wishlist`);                 } else {                     list.splice(idx, 1);                     showToast('♡', `Removed from wishlist`);                 }                  saveWishlist(list);                 applyWishlistState(btn, adding);                  /* Micro-animation: quick scale pop */                 btn.style.transform = 'scale(1.12)';                 setTimeout(() => btn.style.transform = '', 180);             });              /* ---- Copy Link click handler ---- */             document.addEventListener('click', function (e) {                 const btn = e.target.closest('.btn-share');                 if (!btn) return;                  const shareUrl = window.location.href.split('#')[0];                  navigator.clipboard.writeText(shareUrl)                     .then(() => showToast('📋', 'Link copied to clipboard!'))                     .catch(() => showToast('🔗', 'Copy the URL from your address bar'));             });          })();
+  </script>
 </body>
 
 </html>
