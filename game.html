@@ -9,7 +9,9 @@
     <meta name="referrer" content="no-referrer" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Game Archive" />
+    <meta name="apple-mobile-web-app-title" id="ath-app-title" content="Game Archive" />
+    <!-- Dynamically updated per-game icon for iOS Add to Home Screen -->
+    <link rel="apple-touch-icon" id="ath-icon" href="images/Lego Batman Legacy of The Dark Knight.avif" />
     <title id="page-title">Loading… — The Game Repository</title>
     <script src="api.js" defer></script>
     <link rel="stylesheet" href="styles.css" />
@@ -367,6 +369,9 @@
                 ♡ Wishlist
               </button>
               <button class="btn-share" id="detail-share-btn">📋 Copy Link</button>
+              <button class="btn-add-ios" id="detail-addios-btn" title="Add this game to your iOS Home Screen">
+                📱 Add to iOS
+              </button>
             </div>
           </div>
         </section>
@@ -719,6 +724,60 @@
             Let's Play
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+        MODAL — iOS Add to Home Screen Guide
+    ============================================================ -->
+    <div
+      class="modal-overlay"
+      id="ath-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ath-heading"
+    >
+      <div class="modal ath-modal" id="ath-panel" role="document">
+        <button class="modal-close" id="ath-close-btn" aria-label="Close">&#x2715;</button>
+
+        <!-- Game art preview -->
+        <div class="ath-cover-wrap">
+          <div class="ath-cover" id="ath-cover-img"></div>
+          <div class="ath-icon-badge" id="ath-icon-badge"></div>
+        </div>
+
+        <div class="ath-game-name" id="ath-game-name">Loading…</div>
+        <h2 id="ath-heading" class="ath-heading">Add to Home Screen</h2>
+        <p class="ath-sub">Save this game's shortcut directly to your iOS home screen for instant one-tap access.</p>
+
+        <div class="ath-steps">
+          <div class="ath-step">
+            <div class="ath-step-num">1</div>
+            <div class="ath-step-text">
+              Tap the <strong>Share</strong> button
+              <span class="ath-share-icon">
+                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M272 113v215c0 8.8-7.2 16-16 16s-16-7.2-16-16V113l-68.7 68.7c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l96-96c6.2-6.2 16.4-6.2 22.6 0l96 96c6.2 6.2 6.2 16.4 0 22.6s-16.4 6.2-22.6 0L272 113zm-208 87v224c0 17.7 14.3 32 32 32h320c17.7 0 32-14.3 32-32V200c0-17.7-14.3-32-32-32h-80v32h80v224H96V200h80v-32H96c-17.7 0-32 14.3-32 32z"/></svg>
+              </span>
+              in Safari's bottom navigation bar.
+            </div>
+          </div>
+          <div class="ath-step">
+            <div class="ath-step-num">2</div>
+            <div class="ath-step-text">Scroll down and tap <strong style="color:var(--color-accent-2)">Add to Home Screen</strong> <span class="ath-plus-icon">+</span>.</div>
+          </div>
+          <div class="ath-step">
+            <div class="ath-step-num">3</div>
+            <div class="ath-step-text">Tap <strong style="color:var(--color-accent-2)">Add</strong> in the top-right corner — and you're done!</div>
+          </div>
+        </div>
+
+        <div class="ath-preview-label">Your home screen shortcut will look like this:</div>
+        <div class="ath-home-preview">
+          <div class="ath-home-icon" id="ath-home-icon-preview"></div>
+          <div class="ath-home-icon-label" id="ath-home-label-preview">Game</div>
+        </div>
+
+        <button class="btn-launch ath-done-btn" id="ath-done-btn">Got it — Open Safari Now ↗</button>
       </div>
     </div>
 
@@ -1131,6 +1190,48 @@
           );
         });
       }
+
+      /* ---- iOS Add to Home Screen Modal ---- */
+      (function initAddToHomeScreen() {
+        const athOverlay  = document.getElementById('ath-overlay');
+        const athCloseBtn = document.getElementById('ath-close-btn');
+        const athDoneBtn  = document.getElementById('ath-done-btn');
+        if (!athOverlay) return;
+
+        function openAth() {
+          athOverlay.classList.add('is-open');
+          document.body.classList.add('modal-open');
+        }
+        function closeAth() {
+          athOverlay.classList.remove('is-open');
+          if (!document.querySelector('.modal-overlay.is-open:not(#ath-overlay)')) {
+            document.body.classList.remove('modal-open');
+          }
+        }
+
+        athCloseBtn.addEventListener('click', closeAth);
+        athOverlay.addEventListener('click', function(e) {
+          if (e.target === athOverlay) closeAth();
+        });
+        athDoneBtn.addEventListener('click', function() {
+          closeAth();
+        });
+
+        /* Wire up the card button */
+        const addIosBtn = document.getElementById('detail-addios-btn');
+        if (addIosBtn) {
+          addIosBtn.addEventListener('click', openAth);
+        }
+
+        /* Auto-open if ?addtohome=1 in URL */
+        const params = new URLSearchParams(location.search);
+        if (params.get('addtohome') === '1') {
+          setTimeout(openAth, 800);
+        }
+
+        /* Expose opener so game-detail.js can call it after populate() */
+        window.tgrOpenAth = openAth;
+      })();
     </script>
 
     <script src="game-detail.js" defer></script>

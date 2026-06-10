@@ -106,7 +106,13 @@
     description: document.getElementById('detail-description-text'),
     screenshotsSection: document.getElementById('detail-screenshots-section'),
     screenshotsGrid: document.getElementById('detail-screenshots-grid'),
-    pageTitle: document.getElementById('page-title')
+    pageTitle: document.getElementById('page-title'),
+    athCover: document.getElementById('ath-cover-img'),
+    athHomePrev: document.getElementById('ath-home-icon-preview'),
+    athGameName: document.getElementById('ath-game-name'),
+    athHomeLabel: document.getElementById('ath-home-label-preview'),
+    athIconEl: document.getElementById('ath-icon'),
+    athAppTitle: document.getElementById('ath-app-title')
   };
 
   let currentGame = null;
@@ -181,11 +187,37 @@
       els.pageTitle.textContent = `${game.title} — The Game Repository`;
       document.title = els.pageTitle.textContent;
       els.title.textContent = game.title;
+
+      /* --- iOS ATH: set app title meta & modal labels --- */
+      if (els.athAppTitle) els.athAppTitle.content = game.title;
+      if (els.athGameName) els.athGameName.textContent = game.title;
+      /* Truncate to ~14 chars for the home screen icon label */
+      const shortName = game.title.length > 14 ? game.title.substring(0, 13).trim() + '…' : game.title;
+      if (els.athHomeLabel) els.athHomeLabel.textContent = shortName;
     }
 
     /* Cover image */
     if (game.coverImage) {
       els.cover.style.backgroundImage = `url('${escapeHtml(game.coverImage)}')`;
+
+      /* --- iOS ATH: set apple-touch-icon dynamically --- */
+      const absUrl = new URL(game.coverImage, location.href).href;
+      if (els.athIconEl) {
+        els.athIconEl.href = absUrl;
+      }
+      /* Also set via JS for browsers that read it at runtime */
+      let dynIcon = document.getElementById('ath-dynamic-icon');
+      if (!dynIcon) {
+        dynIcon = document.createElement('link');
+        dynIcon.rel = 'apple-touch-icon';
+        dynIcon.id = 'ath-dynamic-icon';
+        document.head.appendChild(dynIcon);
+      }
+      dynIcon.href = absUrl;
+
+      /* Update ATH modal previews */
+      if (els.athCover) els.athCover.style.backgroundImage = `url('${escapeHtml(game.coverImage)}')`;
+      if (els.athHomePrev) els.athHomePrev.style.backgroundImage = `url('${escapeHtml(game.coverImage)}')`;
     }
     if (game.icon) {
       els.coverIcon.textContent = game.icon;
