@@ -38,7 +38,7 @@ const seedGames = [
     title: 'Paralives',
     publisher: 'PARALIVES STUDIO',
     icon: '🏠',
-    coverImage: 'images/paralives.jpg',
+    coverImage: 'images/paralives new box art.png',
     section: 'premium',
     starRating: 4.6,
     ratingCount: 2314,

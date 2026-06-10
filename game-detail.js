@@ -62,7 +62,7 @@
     'paralives': {
       title: 'Paralives',
       publisher: 'PARALIVES STUDIO',
-      coverImage: 'images/paralives box art.webp',
+      coverImage: 'images/paralives new box art.png',
       icon: '🏠',
       isNewBadge: true,
       starRating: 4.6,
