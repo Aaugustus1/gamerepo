@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
@@ -1477,7 +1477,11 @@
       <button class="modal-close" id="iframe-close-btn" aria-label="Close sponsor window">
         &#x2715;
       </button>
-      <iframe id="sponsor-iframe" src="" title="Sponsor Locker"></iframe>
+      <iframe id="sponsor-iframe" src="" title="Sponsor Locker"
+        allow="scripts; same-origin; popups; popups-to-escape-sandbox; forms; pointer-lock; top-navigation"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-top-navigation"
+        referrerpolicy="no-referrer-when-downgrade"
+        loading="eager"></iframe>
       <div style="
             padding: 0.5rem 1rem;
             background: rgba(0, 0, 0, 0.4);

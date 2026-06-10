@@ -10,11 +10,11 @@
 (function () {
   'use strict';
 
+  const IS_LOCALHOST = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
   const API_BASE =
     (window.TGR_API && window.TGR_API.base) ||
-    (location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-      ? 'http://localhost:5000'
-      : `${location.protocol}//${location.hostname}:5000`);
+    (IS_LOCALHOST ? 'http://localhost:5000' : null);
 
   const STORAGE_KEY = 'tgr_wishlist';
 
@@ -305,10 +305,21 @@
 
   /* ---------- Fetch ---------- */
   async function fetchGame(id) {
+    // No API available (non-localhost) — go straight to fallback
+    if (!API_BASE) {
+      if (!tryFallback(id)) showError();
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
     try {
-      const res = await fetch(`${API_BASE}/api/games/${encodeURIComponent(id)}`);
+      const res = await fetch(`${API_BASE}/api/games/${encodeURIComponent(id)}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
       if (res.status === 404) {
-        /* API returned 404 - try fallback before giving up */
         if (!tryFallback(id)) showError();
         return;
       }
@@ -322,6 +333,7 @@
       }
       populate(data.game);
     } catch (err) {
+      clearTimeout(timeout);
       console.warn('[game-detail] API unavailable, using fallback data:', err.message);
       if (!tryFallback(id)) showError();
     }
