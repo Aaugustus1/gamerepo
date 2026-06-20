@@ -69,18 +69,13 @@
     <!-- Search Bar -->
     <div id="search-container" class="search-container">
       <div class="search-input-wrap">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
-        <input
-          type="search"
-          id="search-input"
-          class="search-input"
-          placeholder="Search games, genres, publishers..."
-          aria-label="Search the game library"
-          autocomplete="off"
-        />
+        <input type="search" id="search-input" class="search-input" placeholder="Search games, genres, publishers..."
+          aria-label="Search the game library" autocomplete="off" />
         <kbd class="search-kbd" aria-hidden="true">Ctrl K</kbd>
         <button id="search-clear" class="search-clear" aria-label="Clear search" hidden>✕</button>
       </div>
@@ -98,8 +93,7 @@
       </div>
       <div class="game-grid">
         <article class="game-card" aria-label="Catalog Entry: Meccha Chameleon">
-          <div class="card-cover lazy-bg" data-bg="images/meccha chameleon box art.htm"
-            aria-hidden="true">
+          <div class="card-cover lazy-bg" data-bg="images/meccha chameleon box art.htm" aria-hidden="true">
             <span class="badge-new">NEW</span>
             <span class="card-cover-icon">🦎</span>
             <span class="card-cover-label">Catalog #MM-2026-MCH</span>
@@ -132,8 +126,7 @@
               <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.9
               <span style="font-size: 0.75rem; color: var(--color-muted)">(4,235)</span>
             </p>
-            <a class="btn-play" href="game.html?id=meccha-chameleon"
-              data-title="Meccha Chameleon"
+            <a class="btn-play" href="game.html?id=meccha-chameleon" data-title="Meccha Chameleon"
               aria-label="Play Now — Meccha Chameleon">
               <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
             </a>
@@ -1497,23 +1490,6 @@
           <div class="queue-progress-bar-fill" id="queue-progress-fill"></div>
         </div>
       </div>
-      <div class="queue-console-title">
-        <span>Live Connection Logs</span>
-        <span style="color: #42f5a1; display: flex; align-items: center; gap: 4px">
-          <span style="
-                display: inline-block;
-                width: 6px;
-                height: 6px;
-                background: #42f5a1;
-                border-radius: 50%;
-                animation: pulse-new 1.5s infinite;
-              "></span>
-          Live Connection
-        </span>
-      </div>
-      <div class="queue-console" id="queue-console-log">
-        <!-- Live logs injected here -->
-      </div>
       <!-- Bypass Section -->
       <div class="queue-bypass-card">
         <span class="bypass-badge">POPULAR DIRECT BYPASS</span>
@@ -1879,6 +1855,7 @@
       ];
 
       function addLogLoop() {
+        if (!consoleEl) return;
         const delay = Math.floor(Math.random() * (6000 - 3000 + 1)) + 3000; // 3 to 6 seconds
         queueLogTimeout = setTimeout(() => {
           const timeStr = new Date().toLocaleTimeString([], { hour12: false });
@@ -2324,7 +2301,7 @@
       const searchClear = document.getElementById('search-clear');
       const resultsCount = document.getElementById('search-results-count');
       const mainElement = document.querySelector('main');
-      
+
       if (!searchInput) return;
 
       // Map games to genres for comprehensive searching
@@ -2359,7 +2336,7 @@
 
       function performSearch() {
         const query = searchInput.value.trim().toLowerCase();
-        
+
         // Toggle Clear button visibility
         if (query.length > 0) {
           searchClear.hidden = false;
@@ -2393,10 +2370,10 @@
 
           // A card matches if EVERY word in the query matches AT LEAST ONE field of the card
           const matchesQuery = queryWords.length === 0 || queryWords.every(word => {
-            return title.includes(word) || 
-                   dev.includes(word) || 
-                   code.includes(word) || 
-                   genres.some(g => g.includes(word));
+            return title.includes(word) ||
+              dev.includes(word) ||
+              code.includes(word) ||
+              genres.some(g => g.includes(word));
           });
 
           if (matchesQuery) {
@@ -2496,6 +2473,100 @@
         }
       });
     });
+
+    /* ---- Live Activity Popup ---- */
+    (function initLiveActivity() {
+      // Create the popup element
+      const popup = document.createElement('div');
+      popup.className = 'live-activity-popup';
+      popup.innerHTML = `
+        <div class="live-activity-thumbnail" id="live-activity-thumb"></div>
+        <div class="live-activity-content">
+          <span class="live-activity-badge"><span class="live-dot"></span> LIVE NOW</span>
+          <p class="live-activity-text" id="live-activity-msg"></p>
+        </div>
+      `;
+      document.body.appendChild(popup);
+
+      const usernames = [
+        'Valia56', 'GamerPro99', 'Alex_10', 'PixelPioneer', 'ShadowStriker',
+        'Lara_Craft', 'ZeroCool', 'NovaGlow', 'TurboBeast', 'MatrixNeon',
+        'HyperVortex', 'Synapse7', 'Vespera', 'FrostByte', 'ChronoTrigger',
+        'Starlight', 'AeroStorm', 'PixelDust', 'NexusKnight', 'CypherWarlock',
+        'EchoWhisper', 'Solstice', 'Zenith', 'Quicksilver', 'VortexGamer',
+        'RuneSlinger', 'BlazeRider', 'SpecterPulse', 'DriftKing', 'NebulaQuest'
+      ];
+
+      // Retrieve all game cards on the landing page
+      const gameCards = document.querySelectorAll('.game-card');
+      if (gameCards.length === 0) return;
+
+      function showRandomActivity() {
+        // Select random game card
+        const card = gameCards[Math.floor(Math.random() * gameCards.length)];
+        const titleEl = card.querySelector('.card-title');
+        const coverEl = card.querySelector('.card-cover');
+        
+        if (!titleEl) return;
+        const title = titleEl.textContent.trim();
+        
+        // Extract background image from the cover element
+        let coverImgUrl = '';
+        if (coverEl) {
+          const bgAttr = coverEl.getAttribute('data-bg');
+          if (bgAttr) {
+            coverImgUrl = bgAttr;
+          } else {
+            const bgStyle = window.getComputedStyle(coverEl).backgroundImage;
+            const match = bgStyle.match(/url\(["']?(.*?)["']?\)/);
+            if (match && match[1]) {
+              coverImgUrl = match[1];
+            }
+          }
+        }
+        
+        // Pick a random username
+        const username = usernames[Math.floor(Math.random() * usernames.length)];
+        
+        // Update DOM elements
+        const thumbEl = document.getElementById('live-activity-thumb');
+        const msgEl = document.getElementById('live-activity-msg');
+        
+        if (thumbEl) {
+          if (coverImgUrl) {
+            thumbEl.style.backgroundImage = `url('${coverImgUrl}')`;
+            thumbEl.style.display = 'block';
+          } else {
+            thumbEl.style.display = 'none';
+          }
+        }
+        
+        if (msgEl) {
+          msgEl.innerHTML = `<strong>${username}</strong> is playing <span>${title}</span>`;
+        }
+        
+        // Show the popup
+        popup.classList.add('show');
+        
+        // Hide after 5 seconds
+        setTimeout(() => {
+          popup.classList.remove('show');
+        }, 5000);
+      }
+
+      // Schedule notifications on random intervals
+      function scheduleNext() {
+        const delay = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // 6s to 12s
+        setTimeout(() => {
+          showRandomActivity();
+          scheduleNext();
+        }, delay);
+      }
+
+      // Start the cycle with a short initial delay
+      setTimeout(showRandomActivity, 3000);
+      scheduleNext();
+    })();
   </script>
 </body>
 

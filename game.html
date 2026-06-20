@@ -541,25 +541,6 @@
           </div>
         </div>
 
-        <div class="queue-console-title">
-          <span>Live Connection Logs</span>
-          <span style="color: #42f5a1; display: flex; align-items: center; gap: 4px">
-            <span
-              style="
-                display: inline-block;
-                width: 6px;
-                height: 6px;
-                background: #42f5a1;
-                border-radius: 50%;
-                animation: pulse-new 1.5s infinite;
-              "
-            ></span>
-            Live Connection
-          </span>
-        </div>
-        <div class="queue-console" id="queue-console-log">
-          <!-- Live logs injected here -->
-        </div>
 
         <!-- Bypass Section -->
         <div class="queue-bypass-card">
@@ -1022,6 +1003,7 @@
         ];
 
         function addLogLoop() {
+          if (!consoleEl) return;
           const delay = Math.floor(Math.random() * (6000 - 3000 + 1)) + 3000;
           queueLogTimeout = setTimeout(() => {
             const timeStr = new Date().toLocaleTimeString([], { hour12: false });

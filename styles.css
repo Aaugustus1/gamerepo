@@ -2137,3 +2137,119 @@ body.light-theme .search-clear:hover {
   background: rgba(0, 0, 0, 0.12);
   color: #333;
 }
+
+/* ============================================================
+    LIVE ACTIVITY POPUP
+============================================================ */
+.live-activity-popup {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(20, 20, 35, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(120%) scale(0.9);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+  pointer-events: none;
+  max-width: 320px;
+}
+
+.live-activity-popup.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.live-activity-thumbnail {
+  width: 44px;
+  height: 44px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.live-activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+
+.live-activity-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #42f5a1;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.live-activity-badge .live-dot {
+  width: 6px;
+  height: 6px;
+  background: #42f5a1;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #42f5a1;
+  animation: live-pulse-dot 1.5s infinite;
+}
+
+@keyframes live-pulse-dot {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.live-activity-text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: #e2e2e9;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.live-activity-text strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.live-activity-text span {
+  color: var(--color-accent-2, #a855f7);
+  font-weight: 600;
+}
+
+/* Light theme adjustments */
+body.light-theme .live-activity-popup {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+body.light-theme .live-activity-text {
+  color: #2e2e3a;
+}
+
+body.light-theme .live-activity-text strong {
+  color: #1a1a24;
+}
+
+body.light-theme .live-activity-badge {
+  color: #1b6329;
+}
+
+body.light-theme .live-activity-badge .live-dot {
+  background: #1b6329;
+  box-shadow: 0 0 6px #1b6329;
+}
+
