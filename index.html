@@ -16,6 +16,37 @@
 <body>
   <!-- Animated Background Particles -->
   <div id="bg-particles" aria-hidden="true"></div>
+
+  <!-- Announcement Banner -->
+  <div id="announcement-banner" class="announcement-banner">
+    <div class="announcement-content">
+      <span class="announcement-badge">NEW</span>
+      <span class="announcement-text">
+        <strong>Cyberpunk 2077</strong> and <strong>Meccha Chameleon</strong> have been added to the library!
+      </span>
+    </div>
+    <button id="announcement-close" class="announcement-close" aria-label="Dismiss announcement">&times;</button>
+  </div>
+  <script>
+    (function () {
+      const banner = document.getElementById('announcement-banner');
+      if (localStorage.getItem('tgr_announcement_dismissed') === 'true') {
+        banner.style.display = 'none';
+      } else {
+        const closeBtn = document.getElementById('announcement-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function () {
+            banner.classList.add('dismissed');
+            localStorage.setItem('tgr_announcement_dismissed', 'true');
+            setTimeout(() => {
+              banner.style.display = 'none';
+            }, 300);
+          });
+        }
+      }
+    })();
+  </script>
+
   <!-- ============================================================        HEADER   ============================================================ -->
   <header>
     <nav aria-label="Main navigation">
@@ -89,7 +120,7 @@
       <div class="section-header">
         <h2 id="modern-games-heading">Premium Cloud Library</h2>
         <div class="section-line" aria-hidden="true"></div>
-        <span class="section-count" aria-label="4 games">04</span>
+        <span class="section-count" aria-label="5 games">05</span>
       </div>
       <div class="game-grid">
         <article class="game-card" aria-label="Catalog Entry: Meccha Chameleon">
@@ -281,6 +312,54 @@
             <div class="online-status">
               <div class="online-dot"></div>
               1,456 players online right now
+            </div>
+          </div>
+        </article>
+        <article class="game-card" aria-label="Catalog Entry: Cyberpunk 2077">
+          <div class="card-cover lazy-bg" data-bg="images/cyberpunk_2077_box_art.jpg" aria-hidden="true">
+            <span class="badge-new">NEW</span>
+            <span class="card-cover-icon">⚡</span>
+            <span class="card-cover-label">Catalog #MM-2020-CPK</span>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <div style="display: flex; gap: 8px">
+                <span class="badge" style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid rgba(255, 255, 255, 0.1);
+                      color: var(--color-muted);
+                    ">ARCHIVE</span>
+                <span class="badge" style="
+                      background: rgba(168, 85, 247, 0.1);
+                      border: 1px solid rgba(168, 85, 247, 0.3);
+                      color: #a855f7;
+                    ">CLOUD READY</span>
+              </div>
+            </div>
+            <p class="card-title" style="font-size: 1.2rem; line-height: 1.2; margin-top: 4px">
+              Cyberpunk 2077
+            </p>
+            <p class="card-dev">BY CD PROJEKT RED</p>
+            <p class="card-description" style="
+                  margin-bottom: 0;
+                  font-size: 0.95rem;
+                  font-weight: 700;
+                  margin-top: auto;
+                ">
+              <span style="color: #a855f7">★ ★ ★ ★ ★</span> 4.8
+              <span style="font-size: 0.75rem; color: var(--color-muted)">(654,200)</span>
+            </p>
+            <a class="btn-play" href="game.html?id=cyberpunk-2077" data-title="Cyberpunk 2077"
+              aria-label="Play Now — Cyberpunk 2077">
+              <span class="btn-play-icon">▶</span> Play Now – Cloud Stream
+            </a>
+            <div class="card-actions">
+              <button class="btn-wishlist">♡ Wishlist</button>
+              <button class="btn-share">📋 Copy Link</button>
+            </div>
+            <div class="online-status">
+              <div class="online-dot"></div>
+              45,890 players online right now
             </div>
           </div>
         </article>
@@ -2310,6 +2389,7 @@
         'lego batman': ['action', 'adventure', 'lego', 'superhero'],
         'tomodachi life': ['simulation', 'life sim', 'social', 'humor'],
         'paralives': ['simulation', 'indie', 'life sim'],
+        'cyberpunk 2077': ['action', 'rpg', 'open world'],
         'super mario world': ['platformer', 'retro'],
         'ocarina of time': ['action', 'adventure', 'retro'],
         'tetris': ['puzzle', 'retro'],
@@ -2506,10 +2586,10 @@
         const card = gameCards[Math.floor(Math.random() * gameCards.length)];
         const titleEl = card.querySelector('.card-title');
         const coverEl = card.querySelector('.card-cover');
-        
+
         if (!titleEl) return;
         const title = titleEl.textContent.trim();
-        
+
         // Extract background image from the cover element
         let coverImgUrl = '';
         if (coverEl) {
@@ -2524,14 +2604,14 @@
             }
           }
         }
-        
+
         // Pick a random username
         const username = usernames[Math.floor(Math.random() * usernames.length)];
-        
+
         // Update DOM elements
         const thumbEl = document.getElementById('live-activity-thumb');
         const msgEl = document.getElementById('live-activity-msg');
-        
+
         if (thumbEl) {
           if (coverImgUrl) {
             thumbEl.style.backgroundImage = `url('${coverImgUrl}')`;
@@ -2540,14 +2620,14 @@
             thumbEl.style.display = 'none';
           }
         }
-        
+
         if (msgEl) {
           msgEl.innerHTML = `<strong>${username}</strong> is playing <span>${title}</span>`;
         }
-        
+
         // Show the popup
         popup.classList.add('show');
-        
+
         // Hide after 5 seconds
         setTimeout(() => {
           popup.classList.remove('show');

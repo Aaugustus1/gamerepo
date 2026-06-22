@@ -29,7 +29,8 @@
         const SLUGS = [
             'lego-batman-legacy-of-the-dark-knight',
             'tomodachi-life-living-the-dream',
-            'paralives'
+            'paralives',
+            'cyberpunk-2077'
         ];
 
         function addResult(name, passed, detail) {
@@ -93,6 +94,7 @@
                     [js.includes('lego-batman-legacy-of-the-dark-knight'), 'Has LEGO Batman fallback'],
                     [js.includes('tomodachi-life-living-the-dream'), 'Has Tomodachi Life fallback'],
                     [js.includes('paralives'), 'Has Paralives fallback'],
+                    [js.includes('cyberpunk-2077'), 'Has Cyberpunk 2077 fallback'],
                     [js.includes('tryFallback'), 'Has tryFallback function'],
                     [js.includes('titleToSlug'), 'Has titleToSlug helper'],
                     [js.includes('populate('), 'Has populate function'],
@@ -192,6 +194,7 @@
                 <p>→ <a href="game.html?id=lego-batman-legacy-of-the-dark-knight">LEGO Batman detail page</a></p>
                 <p>→ <a href="game.html?id=tomodachi-life-living-the-dream">Tomodachi Life detail page</a></p>
                 <p>→ <a href="game.html?id=paralives">Paralives detail page</a></p>
+                <p>→ <a href="game.html?id=cyberpunk-2077">Cyberpunk 2077 detail page</a></p>
                 <p>→ <a href="game.html?id=nonexistent-game">Invalid game (should show error)</a></p>
                 <p>→ <a href="index.html">Back to index.html</a></p>
             `;

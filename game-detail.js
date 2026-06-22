@@ -96,6 +96,28 @@
         'images/paralives_ss3.jpg',
         'images/paralives_ss4.jpg'
       ]
+    },
+    'cyberpunk-2077': {
+      title: 'Cyberpunk 2077',
+      publisher: 'CD PROJEKT RED',
+      coverImage: 'images/cyberpunk_2077_box_art.jpg',
+      icon: '⚡',
+      isNewBadge: true,
+      starRating: 4.8,
+      ratingCount: 654200,
+      catalogCode: '#MM-2020-CPK',
+      genres: ['Action', 'RPG', 'Open World'],
+      cloudReady: true,
+      playersOnline: 45890,
+      streamUrl: 'https://store.steampowered.com/app/1091500/Cyberpunk_2077/',
+      description: 'Cyberpunk 2077 is an open-world, action-adventure RPG set in the dark future of Night City — a dangerous megalopolis obsessed with power, glamor, and ceaseless body modification.',
+      screenshots: [
+        'images/cyberpunk_2077_ss0.jpg',
+        'images/cyberpunk_2077_ss1.jpg',
+        'images/cyberpunk_2077_ss2.jpg',
+        'images/cyberpunk_2077_ss3.jpg',
+        'images/cyberpunk_2077_ss4.jpg'
+      ]
     }
   };
 

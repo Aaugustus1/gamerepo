@@ -5,3 +5,5 @@ debug_out.txt
 verify_out.txt
 verify_out2.txt
 .DS_Store
+*.bak
+

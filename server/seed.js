@@ -61,6 +61,28 @@ const seedGames = [
     genres: ['Simulation', 'Indie', 'Life Sim']
   },
   {
+    title: 'Cyberpunk 2077',
+    publisher: 'CD PROJEKT RED',
+    icon: '⚡',
+    coverImage: 'images/cyberpunk_2077_box_art.jpg',
+    section: 'premium',
+    starRating: 4.8,
+    ratingCount: 654200,
+    playersOnline: 45890,
+    catalogCode: 'MM-2020-CPK',
+    isNewBadge: true,
+    genres: ['Action', 'RPG', 'Open World'],
+    description: 'Cyberpunk 2077 is an open-world, action-adventure RPG set in the dark future of Night City — a dangerous megalopolis obsessed with power, glamor, and ceaseless body modification.',
+    streamUrl: 'https://store.steampowered.com/app/1091500/Cyberpunk_2077/',
+    screenshots: [
+      'images/cyberpunk_2077_ss0.jpg',
+      'images/cyberpunk_2077_ss1.jpg',
+      'images/cyberpunk_2077_ss2.jpg',
+      'images/cyberpunk_2077_ss3.jpg',
+      'images/cyberpunk_2077_ss4.jpg'
+    ]
+  },
+  {
     title: 'Super Mario World (1990)',
     publisher: 'THE GAME REPOSITORY',
     icon: '🍄',
