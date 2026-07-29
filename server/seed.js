@@ -83,6 +83,28 @@ const seedGames = [
     ]
   },
   {
+    title: 'It Takes Two',
+    publisher: 'Electronic Arts / Hazelight',
+    icon: '🤝',
+    coverImage: 'images/it_takes_two_box_art.jpg',
+    section: 'premium',
+    starRating: 4.9,
+    ratingCount: 215870,
+    playersOnline: 35420,
+    catalogCode: 'MM-2021-ITT',
+    isNewBadge: true,
+    genres: ['Action', 'Adventure', 'Co-op'],
+    description: 'Embark on the craziest journey of your life in It Takes Two. Invite a friend to join for free with Friend’s Pass and work together across a huge variety of gleefully disruptive gameplay challenges. Winner of GAME OF THE YEAR at the Game Awards 2021.',
+    streamUrl: 'https://store.steampowered.com/app/1426210/It_Takes_Two/',
+    screenshots: [
+      'images/it_takes_two_ss0.jpg',
+      'images/it_takes_two_ss1.jpg',
+      'images/it_takes_two_ss2.jpg',
+      'images/it_takes_two_ss3.jpg',
+      'images/it_takes_two_ss4.jpg'
+    ]
+  },
+  {
     title: 'Super Mario World (1990)',
     publisher: 'THE GAME REPOSITORY',
     icon: '🍄',

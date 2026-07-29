@@ -118,6 +118,28 @@
         'images/cyberpunk_2077_ss3.jpg',
         'images/cyberpunk_2077_ss4.jpg'
       ]
+    },
+    'it-takes-two': {
+      title: 'It Takes Two',
+      publisher: 'Electronic Arts / Hazelight',
+      coverImage: 'images/it_takes_two_box_art.jpg',
+      icon: '🤝',
+      isNewBadge: true,
+      starRating: 4.9,
+      ratingCount: 215870,
+      catalogCode: '#MM-2021-ITT',
+      genres: ['Action', 'Adventure', 'Co-op'],
+      cloudReady: true,
+      playersOnline: 35420,
+      streamUrl: 'https://store.steampowered.com/app/1426210/It_Takes_Two/',
+      description: 'Embark on the craziest journey of your life in It Takes Two. Invite a friend to join for free with Friend’s Pass and work together across a huge variety of gleefully disruptive gameplay challenges. Winner of GAME OF THE YEAR at the Game Awards 2021.',
+      screenshots: [
+        'images/it_takes_two_ss0.jpg',
+        'images/it_takes_two_ss1.jpg',
+        'images/it_takes_two_ss2.jpg',
+        'images/it_takes_two_ss3.jpg',
+        'images/it_takes_two_ss4.jpg'
+      ]
     }
   };
 
