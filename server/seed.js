@@ -105,6 +105,28 @@ const seedGames = [
     ]
   },
   {
+    title: 'DELTARUNE',
+    publisher: 'tobyfox',
+    icon: '👾',
+    coverImage: 'images/deltarune_box_art.jpg',
+    section: 'premium',
+    starRating: 4.9,
+    ratingCount: 154200,
+    playersOnline: 8750,
+    catalogCode: 'MM-2018-DLT',
+    isNewBadge: true,
+    genres: ['RPG', 'Indie', 'Adventure'],
+    description: 'Dive into the parallel story to UNDERTALE! Fight or spare your way through action-packed battles as you explore a mysterious world alongside an endearing cast of new and familiar characters. Chapters 1-5 are available now, with more planned as free updates!',
+    streamUrl: 'https://store.steampowered.com/app/1671210/DELTARUNE/',
+    screenshots: [
+      'images/deltarune_ss0.jpg',
+      'images/deltarune_ss1.jpg',
+      'images/deltarune_ss2.jpg',
+      'images/deltarune_ss3.jpg',
+      'images/deltarune_ss4.jpg'
+    ]
+  },
+  {
     title: 'Super Mario World (1990)',
     publisher: 'THE GAME REPOSITORY',
     icon: '🍄',

@@ -140,6 +140,28 @@
         'images/it_takes_two_ss3.jpg',
         'images/it_takes_two_ss4.jpg'
       ]
+    },
+    'deltarune': {
+      title: 'DELTARUNE',
+      publisher: 'tobyfox',
+      coverImage: 'images/deltarune_box_art.jpg',
+      icon: '👾',
+      isNewBadge: true,
+      starRating: 4.9,
+      ratingCount: 154200,
+      catalogCode: '#MM-2018-DLT',
+      genres: ['RPG', 'Indie', 'Adventure'],
+      cloudReady: true,
+      playersOnline: 8750,
+      streamUrl: 'https://store.steampowered.com/app/1671210/DELTARUNE/',
+      description: 'Dive into the parallel story to UNDERTALE! Fight or spare your way through action-packed battles as you explore a mysterious world alongside an endearing cast of new and familiar characters. Chapters 1-5 are available now, with more planned as free updates!',
+      screenshots: [
+        'images/deltarune_ss0.jpg',
+        'images/deltarune_ss1.jpg',
+        'images/deltarune_ss2.jpg',
+        'images/deltarune_ss3.jpg',
+        'images/deltarune_ss4.jpg'
+      ]
     }
   };
 
