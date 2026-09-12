@@ -27,6 +27,28 @@
 
   /* ---------- Fallback game data (works without API/MongoDB) ---------- */
   const FALLBACK_GAMES = {
+    'dumb-ways-to-build': {
+      "title": "Dumb Ways to Build",
+      "publisher": "Dumb Ways to Die",
+      "coverImage": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4412320/7182e312b98a494c3e498667b132693e9e4f6a0f/header.jpg",
+      "icon": "\ud83d\udee0",
+      "isNewBadge": true,
+      "starRating": null,
+      "ratingCount": 0,
+      "catalogCode": "#MM-2026-DWB",
+      "genres": [
+            "Action",
+            "Adventure",
+            "Casual",
+            "Online Co-op",
+            "Physics"
+      ],
+      "cloudReady": true,
+      "playersOnline": null,
+      "streamUrl": "https://store.steampowered.com/app/4412320/Dumb_Ways_to_Build/",
+      "description": "Take on hazardous construction jobs alone or with up to three friends. Improvise bridges and ramps, experiment with physics-based tools, and customize your Bean as your crew builds its way through chaotic worksites.",
+      "screenshots": []
+},
     'meccha-chameleon': {
       title: 'Meccha Chameleon',
       publisher: 'Lemorion_1224',
@@ -314,9 +336,9 @@
     /* Rating */
     const rating = typeof game.starRating === 'number' ? game.starRating : 4.5;
     const ratingCount = typeof game.ratingCount === 'number' ? game.ratingCount : 0;
-    els.stars.textContent = renderStars(rating);
+    els.stars.textContent = game.starRating === null ? '' : renderStars(rating);
     els.stars.style.color = '#a855f7';
-    els.ratingValue.textContent = rating.toFixed(1);
+    els.ratingValue.textContent = game.starRating === null ? 'Not yet rated' : rating.toFixed(1);
     els.ratingCount.textContent = ratingCount.toLocaleString();
 
     /* Meta */
