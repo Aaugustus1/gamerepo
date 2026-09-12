@@ -10,6 +10,35 @@ const SiteSetting = require('./models/SiteSetting');
 
 const seedGames = [
   {
+    "title": "How to Fish",
+    "publisher": "Dazed Games",
+    "coverImage": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4001890/45c4ddff4901e32c4b8b643e1b97d0d01898d299/header.jpg",
+    "icon": "\ud83c\udfa3",
+    "isNewBadge": true,
+    "starRating": null,
+    "ratingCount": 0,
+    "catalogCode": "#MM-2026-HTF",
+    "genres": [
+        "Action",
+        "Casual",
+        "Indie",
+        "Simulation",
+        "Fishing",
+        "Online Co-op"
+    ],
+    "cloudReady": false,
+    "playersOnline": null,
+    "streamUrl": "https://store.steampowered.com/app/4001890/How_to_Fish/",
+    "description": "Stranded on an island, learn to fish alone or with up to three friends. Catch and sell fish, upgrade your equipment, complete quests, and battle bosses as you explore new islands in this physics-based fishing adventure.",
+    "screenshots": [
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4001890/48f6817fe466a7c9666605527558bf1fac48d0d2/ss_48f6817fe466a7c9666605527558bf1fac48d0d2.1920x1080.jpg",
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4001890/5f867d8c9b03c63867cc95b7bfaa4a3d2193ea48/ss_5f867d8c9b03c63867cc95b7bfaa4a3d2193ea48.1920x1080.jpg",
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4001890/2a912cdbf746286400cece1ca607ac077c11a1dc/ss_2a912cdbf746286400cece1ca607ac077c11a1dc.1920x1080.jpg",
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4001890/e15ab15c09cd3f6ec06d4ffacdf07f6c2b679db2/ss_e15ab15c09cd3f6ec06d4ffacdf07f6c2b679db2.1920x1080.jpg"
+    ],
+    "section": "premium"
+},
+  {
     "title": "Dumb Ways to Build",
     "publisher": "Dumb Ways to Die",
     "coverImage": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4412320/7182e312b98a494c3e498667b132693e9e4f6a0f/header.jpg",
