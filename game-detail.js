@@ -27,6 +27,33 @@
 
   /* ---------- Fallback game data (works without API/MongoDB) ---------- */
   const FALLBACK_GAMES = {
+    'mimic-party': {
+      "title": "Mimic Party",
+      "publisher": "FoliesAPP",
+      "coverImage": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5053820/cb42d784567e89c1c409e49856ece32c9cf8ab36/header.jpg",
+      "icon": "\ud83c\udfa4",
+      "isNewBadge": true,
+      "starRating": null,
+      "ratingCount": 0,
+      "catalogCode": "#MM-2026-MMP",
+      "genres": [
+        "Casual",
+        "Party Game",
+        "Multiplayer",
+        "Music",
+        "Online PvP"
+      ],
+      "cloudReady": false,
+      "playersOnline": null,
+      "streamUrl": "https://store.steampowered.com/app/5053820/Mimic_Party/",
+      "description": "Imitate sounds with your voice in an online party game for one to five players. Everyone records a single attempt, then compares scores for pitch and rhythm. Spin the wheel for bonuses and audio sabotages, and discover themed sound packs or create your own through Steam Workshop.",
+      "screenshots": [
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5053820/a249b423e925d6e42daf910bdf6b03d5a06e40d5/ss_a249b423e925d6e42daf910bdf6b03d5a06e40d5.1920x1080.jpg",
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5053820/949cf458f816dd36f42d52208c643f23d8dd5987/ss_949cf458f816dd36f42d52208c643f23d8dd5987.1920x1080.jpg",
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5053820/2cea4e5c464019a40c39eca3c2ef0f51dfe70c0e/ss_2cea4e5c464019a40c39eca3c2ef0f51dfe70c0e.1920x1080.jpg",
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/5053820/8eb38f57d52f92e91d33fd065d829db21f654280/ss_8eb38f57d52f92e91d33fd065d829db21f654280.1920x1080.jpg"
+      ]
+    },
     'how-to-fish': {
       "title": "How to Fish",
       "publisher": "Dazed Games",
